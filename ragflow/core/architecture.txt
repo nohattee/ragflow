@@ -1,0 +1,64 @@
+RAGFlow Architecture - Core Component Relationships
+==================================================
+
+                                 +------------------+
+                                 |   Document(s)    |
+                                 +------------------+
+                                          |
+                                          v
+                         +----------------------------------+
+                         |    ChunkingStrategyInterface     |
+                         +----------------------------------+
+                                          |
+                                          v
+                +--------------------------------------------------+
+                |                  RAGPipeline                     |
+                |  +-----------------+          +----------------+ |
+                |  |EmbeddingModel   |--------->| VectorStore    | |
+                |  |Interface        |          |Interface       | |
+                |  +-----------------+          +----------------+ |
+                |                                       |          |
+                |                                       v          |
+                |                              +----------------+  |
+                |                              |Retrieval       |  |
+                |                              |StrategyInterface|  |
+                |                              +----------------+  |
+                |                                       |          |
+                |  +-----------------+          +------v-------+  |
+                |  |   LLMInterface  |<---------| Query        |  |
+                |  +-----------------+          +--------------+  |
+                |           |                                     |
+                +-----------v-------------------------------------+
+                            |
+                            v
+                     +-------------+
+                     |   Answer    |
+                     +-------------+
+
+
+Interface Relationships:
+-----------------------
+
+1. ChunkingStrategyInterface
+   - Consumes: Documents
+   - Produces: Chunked Documents
+
+2. EmbeddingModelInterface
+   - Consumes: Document Chunks
+   - Produces: Vector Embeddings
+
+3. VectorStoreInterface
+   - Consumes: Vector Embeddings
+   - Provides: Storage & Retrieval Services
+
+4. RetrievalStrategyInterface
+   - Consumes: Query, Vector Store
+   - Produces: Relevant Documents
+
+5. LLMInterface
+   - Consumes: Query, Retrieved Documents
+   - Produces: Generated Answer
+
+Data Flow:
+---------
+Documents → Chunks → Embeddings → Storage → Retrieval → Generation → Answer

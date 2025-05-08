@@ -1,0 +1,74 @@
+name: Build Documentation
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[docs]
+          pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints sphinx-copybutton
+
+      - name: Build documentation
+        run: |
+          cd docs
+          make html
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: docs/build/html
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download built docs
+        uses: actions/download-artifact@v3
+        with:
+          name: documentation
+          path: docs/build/html
+
+      - name: Set version
+        id: set-version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+            echo "::set-output name=version::$VERSION"
+            echo "::set-output name=is_tag::true"
+          else
+            echo "::set-output name=version::latest"
+            echo "::set-output name=is_tag::false"
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build/html
+          destination_dir: ${{ steps.set-version.outputs.version }}
+
+      # Only update the 'latest' version when pushing to main/master
+      - name: Deploy as 'latest'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build/html
+          destination_dir: latest

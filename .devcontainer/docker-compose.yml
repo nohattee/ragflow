@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app: # The main application service VS Code connects to
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile # We'll need to create this Dockerfile
+    volumes:
+      # Mount the project directory to the workspace directory in the container
+      - ..:/workspace:cached
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+volumes:
+  postgres_data:
+  mailhog_data:
