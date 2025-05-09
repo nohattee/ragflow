@@ -7,7 +7,7 @@ This page documents the adapter implementations for each component interface in 
 Adapters are the concrete implementations that connect RAGFlow to specific technologies and services. They allow the framework to be extended with new components without changing the core pipeline logic.
 
 Chunking Strategies
------------------
+-------------------
 
 Chunking strategy adapters implement the ``ChunkingStrategyInterface`` and are responsible for splitting documents into smaller, manageable pieces.
 
@@ -17,7 +17,7 @@ Chunking strategy adapters implement the ``ChunkingStrategyInterface`` and are r
    :show-inheritance:
 
 Embedding Models
---------------
+----------------
 
 Embedding model adapters implement the ``EmbeddingModelInterface`` and convert text into vector representations that capture semantic meaning.
 
@@ -27,7 +27,7 @@ Embedding model adapters implement the ``EmbeddingModelInterface`` and convert t
    :show-inheritance:
 
 Vector Stores
------------
+-------------
 
 Vector store adapters implement the ``VectorStoreInterface`` and provide storage and retrieval of vector embeddings.
 
@@ -37,7 +37,7 @@ Vector store adapters implement the ``VectorStoreInterface`` and provide storage
    :show-inheritance:
 
 Retrieval Strategies
-------------------
+--------------------
 
 Retrieval strategy adapters implement the ``RetrievalStrategyInterface`` and are responsible for finding the most relevant documents for a query.
 
@@ -57,7 +57,7 @@ LLM adapters implement the ``LLMInterface`` and generate responses based on quer
    :show-inheritance:
 
 Creating Custom Adapters
----------------------
+------------------------
 
 For detailed instructions on how to create your own adapters to extend RAGFlow's capabilities, see the :doc:`../advanced/custom_adapters` guide.
 

@@ -37,37 +37,39 @@ class RAGPipeline:
     customization and extension of the RAG pipeline.
 
     Examples:
+    --------
         Creating a custom RAG pipeline:
-        ```python
-        from ragflow.adapters.chunking_strategies import (
-            RecursiveCharacterTextSplitterAdapter,
-        )
-        from ragflow.adapters.embedding_models import SentenceTransformersAdapter
-        from ragflow.adapters.vector_stores import ChromaDBAdapter
-        from ragflow.adapters.retrieval_strategies import SimpleSimilarityRetriever
-        from ragflow.adapters.llms import GeminiAdapter
-        from ragflow.core.pipeline import RAGPipeline
 
-        # Create the component instances
-        chunker = RecursiveCharacterTextSplitterAdapter(chunk_size=1000)
-        embedder = SentenceTransformersAdapter()
-        vector_store = ChromaDBAdapter(embedding_function=embedder)
-        retriever = SimpleSimilarityRetriever(vector_store=vector_store)
-        llm = GeminiAdapter(api_key="your-api-key")
+        .. code-block:: python
 
-        # Create the pipeline
-        pipeline = RAGPipeline(
-            chunking_strategy=chunker,
-            embedding_model=embedder,
-            vector_store=vector_store,
-            retrieval_strategy=retriever,
-            llm=llm,
-        )
+            from ragflow.adapters.chunking_strategies import (
+                RecursiveCharacterTextSplitterAdapter,
+            )
+            from ragflow.adapters.embedding_models import SentenceTransformersAdapter
+            from ragflow.adapters.vector_stores import ChromaDBAdapter
+            from ragflow.adapters.retrieval_strategies import SimpleSimilarityRetriever
+            from ragflow.adapters.llms import GeminiAdapter
+            from ragflow.core.pipeline import RAGPipeline
 
-        # Use the pipeline
-        pipeline.add_documents([Document(page_content="Example document")])
-        answer = pipeline.query("What is in the document?")
-        ```
+            # Create the component instances
+            chunker = RecursiveCharacterTextSplitterAdapter(chunk_size=1000)
+            embedder = SentenceTransformersAdapter()
+            vector_store = ChromaDBAdapter(embedding_function=embedder)
+            retriever = SimpleSimilarityRetriever(vector_store=vector_store)
+            llm = GeminiAdapter(api_key="your-api-key")
+
+            # Create the pipeline
+            pipeline = RAGPipeline(
+                chunking_strategy=chunker,
+                embedding_model=embedder,
+                vector_store=vector_store,
+                retrieval_strategy=retriever,
+                llm=llm,
+            )
+
+            # Use the pipeline
+            pipeline.add_documents([Document(page_content="Example document")])
+            answer = pipeline.query("What is in the document?")
     """
 
     def __init__(
@@ -98,23 +100,24 @@ class RAGPipeline:
                 Must implement the LLMInterface.
 
         Examples:
-            ```python
-            # Create component instances
-            chunker = RecursiveCharacterTextSplitterAdapter()
-            embedder = SentenceTransformersAdapter()
-            vector_store = ChromaDBAdapter(embedding_function=embedder)
-            retriever = SimpleSimilarityRetriever(vector_store=vector_store)
-            llm = GeminiAdapter(api_key="your-api-key")
+        --------
+            .. code-block:: python
 
-            # Initialize the pipeline
-            pipeline = RAGPipeline(
-                chunking_strategy=chunker,
-                embedding_model=embedder,
-                vector_store=vector_store,
-                retrieval_strategy=retriever,
-                llm=llm,
-            )
-            ```
+                # Create component instances
+                chunker = RecursiveCharacterTextSplitterAdapter()
+                embedder = SentenceTransformersAdapter()
+                vector_store = ChromaDBAdapter(embedding_function=embedder)
+                retriever = SimpleSimilarityRetriever(vector_store=vector_store)
+                llm = GeminiAdapter(api_key="your-api-key")
+
+                # Initialize the pipeline
+                pipeline = RAGPipeline(
+                    chunking_strategy=chunker,
+                    embedding_model=embedder,
+                    vector_store=vector_store,
+                    retrieval_strategy=retriever,
+                    llm=llm,
+                )
         """
         self.chunking_strategy = chunking_strategy
         self.embedding_model = embedding_model
@@ -142,25 +145,26 @@ class RAGPipeline:
             None
 
         Examples:
-            ```python
-            # Create a pipeline
-            pipeline = RAGPipeline(...)
+        --------
+            .. code-block:: python
 
-            # Create Document objects
-            documents = [
-                Document(
-                    page_content="RAGFlow is a framework for building RAG applications.",
-                    metadata={"source": "introduction.txt"},
-                ),
-                Document(
-                    page_content="Vector stores enable efficient similarity search.",
-                    metadata={"source": "concepts.txt"},
-                ),
-            ]
+                # Create a pipeline
+                pipeline = RAGPipeline(...)
 
-            # Add documents to the pipeline
-            pipeline.add_documents(documents)
-            ```
+                # Create Document objects
+                documents = [
+                    Document(
+                        page_content="RAGFlow is a framework for building RAG applications.",
+                        metadata={"source": "introduction.txt"},
+                    ),
+                    Document(
+                        page_content="Vector stores enable efficient similarity search.",
+                        metadata={"source": "concepts.txt"},
+                    ),
+                ]
+
+                # Add documents to the pipeline
+                pipeline.add_documents(documents)
         """
         # Split documents into chunks
         chunked_documents = self.chunking_strategy.split_documents(documents)
@@ -192,25 +196,17 @@ class RAGPipeline:
             None
 
         Examples:
-            ```python
-            # Create a pipeline
-            pipeline = RAGPipeline(...)
+        --------
+            .. code-block:: python
 
-            # Add texts with metadata
-            pipeline.add_texts(
-                texts=[
-                    "RAGFlow is a framework for building RAG applications.",
-                    "Chunking strategies split documents into manageable pieces.",
-                ],
-                metadata=[
-                    {"source": "introduction.txt", "page": 1},
-                    {"source": "concepts.txt", "page": 5},
-                ],
-            )
+                # Create a pipeline
+                pipeline = RAGPipeline(...)
 
-            # Add texts without metadata
-            pipeline.add_texts(["More text content here", "And another example"])
-            ```
+                # Add texts
+                pipeline.add_texts(
+                    ["Some text here.", "Another piece of text."],
+                    metadata=[{"source": "text_source_1"}, {"source": "text_source_2"}],
+                )
         """
         # Convert texts to Documents
         documents = []
@@ -241,28 +237,20 @@ class RAGPipeline:
                 a response based on the stored documents.
 
         Returns:
-            A string containing the generated answer based on retrieved context.
+            str: The generated answer to the question.
 
         Examples:
-            ```python
-            # Create and initialize a pipeline
-            pipeline = RAGPipeline(...)
+        --------
+            .. code-block:: python
 
-            # Add some documents
-            pipeline.add_texts(
-                [
-                    "RAGFlow is a Python framework for building RAG applications.",
-                    "It provides interfaces for document processing and retrieval.",
-                ]
-            )
+                # Create and populate a pipeline
+                pipeline = RAGPipeline(...)
+                pipeline.add_texts(["Paris is the capital of France."])
 
-            # Ask a question
-            answer = pipeline.query("What is RAGFlow?")
-            print(answer)
-            # Output might be: "RAGFlow is a Python framework designed for
-            # building Retrieval Augmented Generation (RAG) applications.
-            # It provides interfaces for document processing and retrieval."
-            ```
+                # Query the pipeline
+                answer = pipeline.query("What is the capital of France?")
+                print(answer)
+                # Output might be: "Paris is the capital of France."
         """
         # Retrieve relevant documents
         relevant_docs = self.retrieval_strategy.get_relevant_documents(question)
@@ -294,33 +282,22 @@ class RAGPipeline:
             - 'sources': List of Document objects used to generate the answer
 
         Examples:
-            ```python
-            # Create and initialize a pipeline
-            pipeline = RAGPipeline(...)
+        --------
+            .. code-block:: python
 
-            # Add some documents with source information
-            pipeline.add_texts(
-                texts=[
-                    "RAGFlow was created in 2024.",
-                    "RAGFlow supports multiple vector databases.",
-                ],
-                metadata=[
-                    {"source": "history.txt", "page": 1},
-                    {"source": "features.txt", "page": 3},
-                ],
-            )
+                # Create and populate a pipeline
+                pipeline = RAGPipeline(...)
+                pipeline.add_texts(["The Eiffel Tower is in Paris."])
 
-            # Ask a question with sources
-            result = pipeline.query_with_sources("When was RAGFlow created?")
+                # Query the pipeline and get sources
+                result = pipeline.query_with_sources("Where is the Eiffel Tower?")
 
-            # Print the answer
-            print(result["answer"])  # "RAGFlow was created in 2024."
+                # Print the answer
+                print(result["answer"])  # "The Eiffel Tower is in Paris."
 
-            # Print the sources
-            for doc in result["sources"]:
-                print(f"Source: {doc.metadata.get('source', 'Unknown')}")
-                print(f"Content: {doc.page_content}")
-            ```
+                # Print the sources
+                for source_doc in result["sources"]:
+                    print(source_doc.page_content, source_doc.metadata)
         """
         # Retrieve relevant documents
         relevant_docs = self.retrieval_strategy.get_relevant_documents(question)

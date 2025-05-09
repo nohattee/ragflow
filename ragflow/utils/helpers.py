@@ -39,21 +39,29 @@ def load_text_files(
         DocumentProcessingError: If there's an issue reading or processing files
 
     Examples:
+    ---------
         Basic usage with default settings:
-        ```python
-        docs = load_text_files("./data")
-        pipeline.add_documents(docs)
-        ```
+
+        .. code-block:: python
+
+            docs = load_text_files("./data")
+            # Assuming 'pipeline' is an initialized RAGPipeline object
+            # pipeline.add_documents(docs)
 
         With custom metadata function:
-        ```python
-        def create_metadata(filepath):
-            filename = os.path.basename(filepath)
-            return {"filename": filename, "date_added": "2025-05-07"}
+
+        .. code-block:: python
+
+            import os
 
 
-        docs = load_text_files("./data", metadata_fn=create_metadata)
-        ```
+            def create_metadata(filepath):
+                filename = os.path.basename(filepath)
+                return {"filename": filename, "date_added": "2025-05-07"}
+
+
+            docs = load_text_files("./data", metadata_fn=create_metadata)
+            # pipeline.add_documents(docs)
     """
     try:
         path = Path(directory_path)
@@ -118,12 +126,13 @@ def create_pipeline_from_env(
         ConfigurationError: If the environment variable is not set
 
     Examples:
-        ```python
-        # Assuming GEMINI_API_KEY is set in the environment
-        pipeline = create_pipeline_from_env()
-        pipeline.add_texts(["Document 1", "Document 2"])
-        answer = pipeline.query("What is in the documents?")
-        ```
+    ---------
+        .. code-block:: python
+
+            # Assuming GEMINI_API_KEY is set in the environment
+            pipeline = create_pipeline_from_env()
+            pipeline.add_texts(["Document 1", "Document 2"])
+            answer = pipeline.query("What is in the documents?")
     """
     api_key = os.environ.get(env_var)
     if not api_key:

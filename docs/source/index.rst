@@ -1,5 +1,5 @@
 Welcome to RAGFlow Documentation
-===============================
+================================
 
 RAGFlow is a high-level, flexible, and extensible framework built on top of the powerful Langchain library, designed to streamline the development of Retrieval Augmented Generation (RAG) applications.
 
@@ -12,7 +12,7 @@ Features
 * **Clean Interface Design**: Use a modular, interface-driven architecture that promotes extensibility and testability.
 
 Getting Started
---------------
+---------------
 
 To get started with RAGFlow, check out the :doc:`installation` guide and the :doc:`quick_start` tutorial.
 
@@ -36,7 +36,7 @@ To get started with RAGFlow, check out the :doc:`installation` guide and the :do
    print(answer)
 
 Table of Contents
-----------------
+-----------------
 
 .. toctree::
    :maxdepth: 2
@@ -50,9 +50,7 @@ Table of Contents
    :maxdepth: 2
    :caption: User Guide
 
-   user_guide/default_pipeline
    user_guide/customization
-   user_guide/component_configuration
 
 .. toctree::
    :maxdepth: 2
@@ -60,7 +58,6 @@ Table of Contents
 
    tutorials/basic_rag
    tutorials/document_loading
-   tutorials/custom_pipeline
 
 .. toctree::
    :maxdepth: 2
@@ -76,19 +73,15 @@ Table of Contents
    :caption: Advanced
 
    advanced/custom_adapters
-   advanced/extending_ragflow
    advanced/performance_tuning
 
 .. toctree::
    :maxdepth: 1
    :caption: Development
 
-   development/contributing
-   development/architecture
-   development/roadmap
 
 Indices and tables
-=================
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`

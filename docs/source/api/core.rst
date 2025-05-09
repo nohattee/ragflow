@@ -5,7 +5,7 @@ Core Module
 This page documents the core interfaces and classes that form the foundation of RAGFlow.
 
 Interfaces
----------
+----------
 
 .. automodule:: ragflow.core.interfaces
    :members:
@@ -13,7 +13,7 @@ Interfaces
    :show-inheritance:
 
 Base Pipeline
------------
+-------------
 
 .. automodule:: ragflow.core.pipeline
    :members:
@@ -21,7 +21,7 @@ Base Pipeline
    :show-inheritance:
 
 Error Handling
-------------
+--------------
 
 .. automodule:: ragflow.core.errors
    :members:

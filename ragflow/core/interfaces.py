@@ -38,23 +38,26 @@ class Document:
             Common keys include 'source', 'author', 'created_at', etc.
 
     Examples:
+    --------
         Creating a simple document:
-        ```python
-        doc = Document(page_content="This is a sample document.")
-        ```
+
+        .. code-block:: python
+
+            doc = Document(page_content="This is a sample document.")
 
         Creating a document with metadata:
-        ```python
-        doc = Document(
-            page_content="This document contains important information.",
-            metadata={
-                "source": "research_paper.pdf",
-                "author": "Smith, J.",
-                "year": 2024,
-                "page": 42,
-            },
-        )
-        ```
+
+        .. code-block:: python
+
+            doc = Document(
+                page_content="This document contains important information.",
+                metadata={
+                    "source": "research_paper.pdf",
+                    "author": "Smith, J.",
+                    "year": 2024,
+                    "page": 42,
+                },
+            )
     """
 
     def __init__(self, page_content: str, metadata: Optional[Dict[str, Any]] = None):
@@ -95,14 +98,16 @@ class ChunkingStrategyInterface(ABC):
     - The chunking parameters (size, overlap) can be configured
 
     Examples:
+    --------
         Using a chunking strategy:
-        ```python
-        chunker = RecursiveCharacterTextSplitterAdapter(
-            chunk_size=1000, chunk_overlap=200
-        )
-        documents = [Document(page_content="A very long document...")]
-        chunks = chunker.split_documents(documents)
-        ```
+
+        .. code-block:: python
+
+            chunker = RecursiveCharacterTextSplitterAdapter(
+                chunk_size=1000, chunk_overlap=200
+            )
+            documents = [Document(page_content="A very long document...")]
+            chunks = chunker.split_documents(documents)
     """
 
     @abstractmethod
@@ -125,20 +130,23 @@ class ChunkingStrategyInterface(ABC):
             may produce multiple chunks.
 
         Examples:
-            ```python
-            chunker = RecursiveCharacterTextSplitterAdapter(chunk_size=1000)
-            long_docs = [
-                Document(
-                    page_content="Long document 1...", metadata={"source": "doc1.txt"}
-                ),
-                Document(
-                    page_content="Long document 2...", metadata={"source": "doc2.txt"}
-                ),
-            ]
-            chunks = chunker.split_documents(long_docs)
-            # chunks will contain multiple Document objects, each with a portion of the
-            # original text and the preserved or modified metadata
-            ```
+        --------
+            .. code-block:: python
+
+                chunker = RecursiveCharacterTextSplitterAdapter(chunk_size=1000)
+                long_docs = [
+                    Document(
+                        page_content="Long document 1...",
+                        metadata={"source": "doc1.txt"},
+                    ),
+                    Document(
+                        page_content="Long document 2...",
+                        metadata={"source": "doc2.txt"},
+                    ),
+                ]
+                chunks = chunker.split_documents(long_docs)
+                # chunks will contain multiple Document objects, each with a portion of the
+                # original text and the preserved or modified metadata
         """
         pass
 
@@ -160,12 +168,13 @@ class ChunkingStrategyInterface(ABC):
             smaller strings according to the chunking strategy.
 
         Examples:
-            ```python
-            chunker = RecursiveCharacterTextSplitterAdapter(chunk_size=1000)
-            long_text = "This is a very long document that needs to be split..."
-            chunks = chunker.split_text(long_text)
-            # chunks will be a list of strings, each up to 1000 characters
-            ```
+        --------
+            .. code-block:: python
+
+                chunker = RecursiveCharacterTextSplitterAdapter(chunk_size=1000)
+                long_text = "This is a very long document that needs to be split..."
+                chunks = chunker.split_text(long_text)
+                # chunks will be a list of strings, each up to 1000 characters
         """
         pass
 
@@ -192,21 +201,23 @@ class EmbeddingModelInterface(ABC):
     - Appropriate error handling for model-specific issues
 
     Examples:
+    --------
         Using an embedding model:
-        ```python
-        embedder = SentenceTransformersAdapter(model_name="all-MiniLM-L6-v2")
 
-        # Embed a single query
-        query_embedding = embedder.embed_query("What is RAGFlow?")
+        .. code-block:: python
 
-        # Embed multiple documents
-        doc_embeddings = embedder.embed_documents(
-            [
-                "RAGFlow is a framework for building RAG applications.",
-                "It provides interfaces for embedding, storage, and retrieval.",
-            ]
-        )
-        ```
+            embedder = SentenceTransformersAdapter(model_name="all-MiniLM-L6-v2")
+
+            # Embed a single query
+            query_embedding = embedder.embed_query("What is RAGFlow?")
+
+            # Embed multiple documents
+            doc_embeddings = embedder.embed_documents(
+                [
+                    "RAGFlow is a framework for building RAG applications.",
+                    "It uses various components like embedding models and vector stores.",
+                ]
+            )
     """
 
     @abstractmethod
@@ -223,19 +234,15 @@ class EmbeddingModelInterface(ABC):
                 or any text that needs to be converted to a vector representation.
 
         Returns:
-            A list of floats representing the embedding vector. The dimension
-            of this vector depends on the specific embedding model implementation.
+            List[float]: The vector embedding of the query.
 
         Examples:
-            ```python
-            embedder = SentenceTransformersAdapter(model_name="all-MiniLM-L6-v2")
-            query = "How does RAG improve search quality?"
-            query_embedding = embedder.embed_query(query)
+        --------
+            .. code-block:: python
 
-            # The embedding is a vector of floating point numbers
-            print(f"Embedding dimension: {len(query_embedding)}")
-            print(f"First few values: {query_embedding[:5]}")
-            ```
+                embedder = SentenceTransformersAdapter()
+                query_embedding = embedder.embed_query("How does RAG work?")
+                # query_embedding will be a list of floats (e.g., [0.1, 0.2, ...])
         """
         pass
 
@@ -256,25 +263,21 @@ class EmbeddingModelInterface(ABC):
                 will be converted to a separate embedding vector.
 
         Returns:
-            List of embedding vectors, one for each input document. Each vector
-            is a list of floats with the same dimension as those produced by
-            embed_query().
+            List[List[float]]: A list of embeddings, where each inner list is a
+            vector embedding for a document. The order of embeddings corresponds
+            to the order of the input documents.
 
         Examples:
-            ```python
-            embedder = SentenceTransformersAdapter(model_name="all-MiniLM-L6-v2")
+        --------
+            .. code-block:: python
 
-            documents = [
-                "RAGFlow provides a simple interface for RAG applications.",
-                "Vector databases store embeddings for efficient retrieval.",
-                "Language models generate text based on retrieved context.",
-            ]
-
-            embeddings = embedder.embed_documents(documents)
-
-            print(f"Generated {len(embeddings)} embeddings")
-            print(f"Each embedding has {len(embeddings[0])} dimensions")
-            ```
+                embedder = SentenceTransformersAdapter()
+                texts_to_embed = [
+                    "RAGFlow provides flexible interfaces.",
+                    "Embeddings are crucial for semantic search.",
+                ]
+                document_embeddings = embedder.embed_documents(texts_to_embed)
+                # document_embeddings will be a list of lists of floats
         """
         pass
 
@@ -306,29 +309,26 @@ class VectorStoreInterface(ABC):
     - Proper error handling for database operations
     - Efficient vector search functionality
     - Appropriate metadata storage and filtering
+    - Efficiently update or delete existing embeddings
 
     Examples:
+    --------
         Using a vector store:
-        ```python
-        # Create an embedding model first
-        embedder = SentenceTransformersAdapter()
 
-        # Create and use a vector store
-        vector_store = ChromaDBAdapter(
-            collection_name="my_documents",
-            persist_directory="./",
-            embedding_function=embedder,
-        )
+        .. code-block:: python
 
-        # Add documents
-        vector_store.add_texts(
-            texts=["Document 1 content", "Document 2 content"],
-            metadata=[{"source": "file1.txt"}, {"source": "file2.txt"}],
-        )
+            embedder = SentenceTransformersAdapter()
+            vector_store = ChromaDBAdapter(embedding_function=embedder)
 
-        # Search
-        results = vector_store.similarity_search("search query", k=2)
-        ```
+            # Add documents
+            vector_store.add_texts(
+                ["Document 1 about apples", "Document 2 about oranges"],
+                metadata=[{"source": "doc1"}, {"source": "doc2"}],
+            )
+
+            # Search for similar documents
+            results = vector_store.similarity_search("Tell me about fruits", k=1)
+            print(results)
     """
 
     @abstractmethod
@@ -357,32 +357,29 @@ class VectorStoreInterface(ABC):
             None
 
         Examples:
-            ```python
-            # Create a vector store
-            vector_store = ChromaDBAdapter(
-                collection_name="my_documents", embedding_function=embedder
-            )
+        --------
+            .. code-block:: python
 
-            # Prepare documents
-            documents = [
-                {
-                    "page_content": "RAGFlow is a framework for RAG applications.",
-                    "metadata": {"source": "readme.md", "section": "intro"},
-                },
-                {
-                    "page_content": "Vector stores enable efficient similarity search.",
-                    "metadata": {"source": "guide.md", "section": "concepts"},
-                },
-            ]
+                embedder = SentenceTransformersAdapter()
+                vector_store = ChromaDBAdapter(embedding_function=embedder)
+                docs_to_add = [
+                    {
+                        "page_content": "RAGFlow is a framework for RAG applications.",
+                        "metadata": {"source": "readme.md", "section": "intro"},
+                    },
+                    {
+                        "page_content": "Vector stores enable efficient similarity search.",
+                        "metadata": {"source": "guide.md", "section": "concepts"},
+                    },
+                ]
 
-            # Add documents without providing embeddings (will be generated)
-            vector_store.add_documents(documents)
+                # Add documents without providing embeddings (will be generated)
+                vector_store.add_documents(docs_to_add)
 
-            # Or with pre-computed embeddings
-            doc_texts = [doc["page_content"] for doc in documents]
-            embeddings = embedder.embed_documents(doc_texts)
-            vector_store.add_documents(documents, embeddings=embeddings)
-            ```
+                # Or with pre-computed embeddings
+                doc_texts = [doc["page_content"] for doc in docs_to_add]
+                embeddings = embedder.embed_documents(doc_texts)
+                vector_store.add_documents(docs_to_add, embeddings=embeddings)
         """
         pass
 
@@ -408,28 +405,14 @@ class VectorStoreInterface(ABC):
             None
 
         Examples:
-            ```python
-            vector_store = ChromaDBAdapter(
-                collection_name="my_documents", embedding_function=embedder
-            )
+        --------
+            .. code-block:: python
 
-            # Add texts with metadata
-            vector_store.add_texts(
-                texts=[
-                    "RAGFlow provides a simple interface for RAG applications.",
-                    "Chunking strategies split documents into manageable pieces.",
-                ],
-                metadata=[
-                    {"source": "readme.md", "section": "overview"},
-                    {"source": "concepts.md", "section": "chunking"},
-                ],
-            )
-
-            # Add texts without metadata
-            vector_store.add_texts(
-                ["More document content here", "And another example"]
-            )
-            ```
+                embedder = SentenceTransformersAdapter()
+                vector_store = ChromaDBAdapter(embedding_function=embedder)
+                texts = ["First document text", "Second document text"]
+                metadata = [{"source": "doc1"}, {"source": "doc2"}]
+                vector_store.add_texts(texts, metadata=metadata)
         """
         pass
 
@@ -449,29 +432,19 @@ class VectorStoreInterface(ABC):
             k: Number of similar documents to return. Defaults to 5.
 
         Returns:
-            List of documents most similar to the query, ordered by similarity
-            (most similar first). Each document is a dictionary containing at
-            least 'page_content' (the document text) and 'metadata' (a dictionary
-            of associated metadata).
+            A list of Document objects, ranked by similarity.
 
         Examples:
-            ```python
-            vector_store = ChromaDBAdapter(
-                collection_name="my_documents", embedding_function=embedder
-            )
+        --------
+            .. code-block:: python
 
-            # After adding documents to the vector store
-            results = vector_store.similarity_search(
-                query="How does RAG improve search quality?",
-                k=3,  # Return the top 3 most similar documents
-            )
-
-            # Process the results
-            for doc in results:
-                print("Content:", doc["page_content"])
-                print("Source:", doc["metadata"].get("source", "Unknown"))
-                print("---")
-            ```
+                embedder = SentenceTransformersAdapter()
+                vector_store = ChromaDBAdapter(embedding_function=embedder)
+                query_embedding = embedder.embed_query("Search query")
+                # Assume documents have been added
+                results = vector_store.similarity_search_by_vector(query_embedding, k=2)
+                for doc in results:
+                    print(doc.page_content)
         """
         pass
 
@@ -488,38 +461,23 @@ class VectorStoreInterface(ABC):
         control over the embedding used for search.
 
         Args:
-            embedding: The embedding vector to search with. This should be a list
-                of floating-point numbers with the same dimension as the document
-                embeddings stored in the vector store.
-            k: Number of similar documents to return. Defaults to 4.
+            embedding: The query vector embedding (list of floats).
+            k: The number of similar documents to retrieve. Defaults to 4.
 
         Returns:
-            List of Document objects most similar to the provided embedding,
-            ordered by similarity (most similar first).
+            A list of Document objects, ranked by similarity.
 
         Examples:
-            ```python
-            # Create embedding model and vector store
-            embedder = SentenceTransformersAdapter()
-            vector_store = ChromaDBAdapter(
-                collection_name="my_documents", embedding_function=embedder
-            )
+        --------
+            .. code-block:: python
 
-            # First, create a query embedding
-            query = "What is the role of embeddings in RAG?"
-            query_embedding = embedder.embed_query(query)
-
-            # Then search with that embedding
-            results = vector_store.similarity_search_by_vector(
-                embedding=query_embedding, k=5
-            )
-
-            # Process the results
-            for doc in results:
-                print(doc.page_content)
-                print(f"Source: {doc.metadata.get('source', 'Unknown')}")
-                print("---")
-            ```
+                embedder = SentenceTransformersAdapter()
+                vector_store = ChromaDBAdapter(embedding_function=embedder)
+                query_embedding = embedder.embed_query("Search query")
+                # Assume documents have been added
+                results = vector_store.similarity_search_by_vector(query_embedding, k=2)
+                for doc in results:
+                    print(doc.page_content)
         """
         pass
 
@@ -539,20 +497,24 @@ class RetrievalStrategyInterface(ABC):
     - Multi-step retrieval that iteratively refines results
 
     Implementations of this interface should focus on:
-    - Selecting high-quality, relevant documents for the query
-    - Providing appropriate relevance scoring when possible
-    - Configurable parameters to control retrieval behavior (e.g., number of results)
+    - Integrating with a vector store or other search mechanism
+    - Applying appropriate filtering or re-ranking logic if needed
+    - Handling different query types and complexities
+    - Efficiently querying the underlying vector store or search index
 
     Examples:
+    --------
         Using a retrieval strategy:
-        ```python
-        # Create a vector store first
-        vector_store = ChromaDBAdapter(...)
 
-        # Create and use a retrieval strategy
-        retriever = SimpleSimilarityRetriever(vector_store=vector_store, k=5)
-        relevant_docs = retriever.get_relevant_documents("What is RAG?")
-        ```
+        .. code-block:: python
+
+            embedder = SentenceTransformersAdapter()
+            vector_store = ChromaDBAdapter(embedding_function=embedder)
+            # Add documents to vector_store first...
+            retriever = SimpleSimilarityRetriever(vector_store=vector_store, k=5)
+            relevant_docs = retriever.get_relevant_documents(
+                "What are the key features of RAGFlow?"
+            )
     """
 
     @abstractmethod
@@ -570,20 +532,17 @@ class RetrievalStrategyInterface(ABC):
                 as a natural language string.
 
         Returns:
-            A list of Document objects that are most relevant to the query.
-            The documents are typically ordered by relevance (most relevant first).
+            A list of Document objects considered relevant to the query.
 
         Examples:
-            ```python
-            retriever = SimpleSimilarityRetriever(vector_store=vector_store)
-            query = "What are the benefits of RAG systems?"
-            relevant_docs = retriever.get_relevant_documents(query)
+        --------
+            .. code-block:: python
 
-            # Access the content of the first relevant document
-            if relevant_docs:
-                print(relevant_docs[0].page_content)
-                print(relevant_docs[0].metadata)  # Source information, etc.
-            ```
+                retriever = SimpleSimilarityRetriever(vector_store=my_vector_store, k=3)
+                documents = retriever.get_relevant_documents(
+                    "How to build a RAG pipeline?"
+                )
+                # documents will be a list of up to 3 Document objects
         """
         pass
 
@@ -605,21 +564,16 @@ class RetrievalStrategyInterface(ABC):
 
         Returns:
             A list of tuples, each containing a Document object and its
-            corresponding relevance score (typically a float between 0 and 1,
-            where higher values indicate greater relevance).
+            corresponding relevance score (float) representing its relevance.
 
         Examples:
-            ```python
-            retriever = SimpleSimilarityRetriever(vector_store=vector_store)
-            query = "How does chunking affect RAG performance?"
-            results = retriever.get_relevant_documents_with_scores(query)
+        --------
+            .. code-block:: python
 
-            # Process results with score filtering
-            for doc, score in results:
-                if score > 0.8:  # Only use high-confidence matches
-                    print(f"Relevance: {score:.2f}")
-                    print(doc.page_content)
-            ```
+                retriever = SimpleSimilarityRetriever(vector_store=my_vector_store)
+                results = retriever.get_relevant_documents_with_scores("Query text")
+                for doc, score in results:
+                    print(f"Score: {score}, Content: {doc.page_content}")
         """
         pass
 
@@ -645,14 +599,33 @@ class LLMInterface(ABC):
     - Crafting appropriate prompts that incorporate the retrieved context
     - Handling API-specific parameters like temperature, max tokens, etc.
     - Proper error handling for API quotas, rate limits, etc.
+    - Handling of rate limits, API errors, and retries if applicable
 
     Examples:
-        Using an LLM adapter:
-        ```python
-        llm = GeminiAdapter(api_key="your-api-key")
-        response = llm.generate("What is the capital of France?")
-        print(response)  # "The capital of France is Paris."
-        ```
+    --------
+        Using an LLM interface:
+
+        .. code-block:: python
+
+            llm = GeminiAdapter(api_key="YOUR_API_KEY")
+            answer = llm.generate("What is the capital of France?")
+            print(answer)  # Expected: Paris
+
+        Generating with context:
+
+        .. code-block:: python
+
+            llm = GeminiAdapter(api_key="your-api-key")
+            vector_store = ChromaDBAdapter(...)
+            retriever = SimpleSimilarityRetriever(vector_store=vector_store)
+
+            # Get relevant documents for a query
+            query = "What is the impact of chunking on RAG performance?"
+            relevant_docs = retriever.get_relevant_documents(query)
+
+            # Generate answer using context
+            answer = llm.generate_with_context(query, relevant_docs)
+            print(answer)
     """
 
     @abstractmethod
@@ -674,21 +647,22 @@ class LLMInterface(ABC):
                 additional information that influences generation.
 
         Returns:
-            A string containing the generated text response from the LLM.
+            A string containing the generated text.
 
         Examples:
-            ```python
-            llm = GeminiAdapter(api_key="your-api-key", temperature=0.7)
+        --------
+            .. code-block:: python
 
-            # Simple prompt without context
-            response = llm.generate("Write a haiku about programming.")
+                llm = GeminiAdapter(api_key="your-api-key", temperature=0.7)
 
-            # With additional context/parameters
-            response = llm.generate(
-                prompt="What is machine learning?",
-                context={"max_tokens": 100, "style": "concise"},
-            )
-            ```
+                # Simple prompt without context
+                response = llm.generate("Write a haiku about programming.")
+
+                # With additional context/parameters
+                response = llm.generate(
+                    prompt="What is machine learning?",
+                    context={"max_tokens": 100, "style": "concise"},
+                )
         """
         pass
 
@@ -703,29 +677,25 @@ class LLMInterface(ABC):
         both the query and the context in a way that the LLM can use.
 
         Args:
-            query: The user query or question to answer.
-            context: A list of Document objects providing relevant context
-                for answering the query. These documents typically come
-                from a retrieval system.
+            query: The user's query or question.
+            context: A list of Document objects providing relevant context for the query.
+                These are typically retrieved from a vector store.
 
         Returns:
-            A string containing the generated response that answers the
-            query based on the provided context.
+            A string containing the generated answer.
 
         Examples:
-            ```python
-            # Set up components
-            llm = GeminiAdapter(api_key="your-api-key")
-            vector_store = ChromaDBAdapter(...)
-            retriever = SimpleSimilarityRetriever(vector_store=vector_store)
+        --------
+            .. code-block:: python
 
-            # Get relevant documents for a query
-            query = "What is the impact of chunking on RAG performance?"
-            relevant_docs = retriever.get_relevant_documents(query)
-
-            # Generate answer using context
-            answer = llm.generate_with_context(query, relevant_docs)
-            print(answer)
-            ```
+                llm = GeminiAdapter(api_key="YOUR_API_KEY")
+                retrieved_documents = [
+                    Document(page_content="The sky is blue during the day."),
+                    Document(page_content="The sun is a star."),
+                ]
+                answer = llm.generate_with_context(
+                    "Why is the sky blue?", context=retrieved_documents
+                )
+                # Answer will be based on the provided documents and the LLM's knowledge
         """
         pass

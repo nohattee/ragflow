@@ -10,6 +10,10 @@
 import os
 import sys
 
+__import__("pysqlite3")
+sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+
+
 # Path setup
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -69,7 +73,7 @@ html_show_sourcelink = True
 # Intersphinx mapping
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "langchain": ("https://docs.langchain.com/docs", None),
+    "langchain": ("https://api.python.langchain.com/en/latest/", None),
 }
 
 # TODOs

@@ -50,25 +50,29 @@ class DefaultRAGPipeline(RAGPipeline):
     You can configure these components through the constructor parameters.
 
     Examples:
+    --------
         Basic usage with environment variable for API key:
-        ```python
-        # Set GEMINI_API_KEY environment variable first
-        pipeline = DefaultRAGPipeline()
-        pipeline.add_texts(["Document 1", "Document 2"])
-        answer = pipeline.query("What is the content of the documents?")
-        ```
+
+        .. code-block:: python
+
+            # Set GEMINI_API_KEY environment variable first
+            pipeline = DefaultRAGPipeline()
+            pipeline.add_texts(["Document 1", "Document 2"])
+            answer = pipeline.query("What is the content of the documents?")
 
         Providing API key directly:
-        ```python
-        pipeline = DefaultRAGPipeline(api_key="your-gemini-api-key")
-        ```
+
+        .. code-block:: python
+
+            pipeline = DefaultRAGPipeline(api_key="your-gemini-api-key")
 
         Customizing component parameters:
-        ```python
-        pipeline = DefaultRAGPipeline(
-            chunk_size=500, chunk_overlap=50, retrieval_k=5, temperature=0.5
-        )
-        ```
+
+        .. code-block:: python
+
+            pipeline = DefaultRAGPipeline(
+                chunk_size=500, chunk_overlap=50, retrieval_k=5, temperature=0.5
+            )
     """
 
     def __init__(
