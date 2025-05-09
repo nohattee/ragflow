@@ -11,9 +11,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5 # Check for the latest stable version
         with:
           python-version: '3.9'
 
@@ -29,7 +29,7 @@ jobs:
           make html
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: documentation
           path: docs/build/html
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download built docs
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: documentation
           path: docs/build/html
@@ -50,25 +50,31 @@ jobs:
         run: |
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
-            echo "::set-output name=version::$VERSION"
-            echo "::set-output name=is_tag::true"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "is_tag=true" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=version::latest"
-            echo "::set-output name=is_tag::false"
+            echo "version=latest" >> $GITHUB_OUTPUT
+            echo "is_tag=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy to GitHub Pages (Versioned)
+        if: steps.set-version.outputs.is_tag == 'true' # Only run for tags
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/build/html
           destination_dir: ${{ steps.set-version.outputs.version }}
+          # user_name: 'github-actions[bot]' # Optional: configure committer username
+          # user_email: 'github-actions[bot]@users.noreply.github.com' # Optional: configure committer email
+          # commit_message: Deploy ${{ steps.set-version.outputs.version }} to GitHub Pages # Optional: custom commit message
 
-      # Only update the 'latest' version when pushing to main/master
-      - name: Deploy as 'latest'
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy to GitHub Pages (Latest)
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' # Only run for main/master
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/build/html
           destination_dir: latest
+          # user_name: 'github-actions[bot]' # Optional: configure committer username
+          # user_email: 'github-actions[bot]@users.noreply.github.com' # Optional: configure committer email
+          # commit_message: Deploy latest to GitHub Pages # Optional: custom commit message

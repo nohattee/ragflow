@@ -7,7 +7,7 @@ API to generate text.
 
 from typing import List, Optional
 
-import google.generativeai as genai
+import google as genai
 
 from ragflow.core.interfaces import Document, LLMInterface
 

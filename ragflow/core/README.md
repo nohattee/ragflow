@@ -75,7 +75,7 @@ The `RAGPipeline` class orchestrates the entire RAG workflow by composing the ab
 # Initialize components
 chunker = RecursiveCharacterTextSplitterAdapter(chunk_size=1000, chunk_overlap=200)
 embeddings = SentenceTransformersAdapter(model_name="all-MiniLM-L6-v2")
-vector_store = ChromaDBAdapter(persist_directory="./data/chroma_db")
+vector_store = ChromaDBAdapter(persist_directory="./")
 retriever = SimilarityRetrievalStrategy(vector_store=vector_store, k=4)
 llm = GeminiAdapter(api_key=os.environ["GEMINI_API_KEY"])
 

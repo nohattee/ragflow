@@ -115,7 +115,7 @@ pipeline = DefaultRAGPipeline(api_key="YOUR_GEMINI_API_KEY")
 
 # Standard configuration
 pipeline = DefaultRAGPipeline(
-    persist_directory="./my_chroma_db",  # Default: "./data/chroma_db"
+    persist_directory="./",  # Default: "./"
     api_key="YOUR_GEMINI_API_KEY",       # Required (or via GEMINI_API_KEY env var)
     embedding_model_name="all-MiniLM-L6-v2",  # Default: "all-MiniLM-L6-v2"
     chunk_size=800,                      # Default: 1000

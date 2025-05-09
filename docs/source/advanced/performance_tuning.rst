@@ -235,7 +235,7 @@ RAGFlow supports different vector stores through adapters. Each has different pe
     # ChromaDB - good for persistence and metadata filtering
     chroma_store = ChromaDBAdapter(
         collection_name="my_documents",
-        persist_directory="./data/chroma_db",
+        persist_directory="./",
         embedding_function=embedder
     )
 

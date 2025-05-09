@@ -23,7 +23,7 @@ from ragflow import DefaultRAGPipeline
 
 # Create a pipeline with default settings
 pipeline = DefaultRAGPipeline.from_defaults(
-    persist_directory="./data/chroma_db",
+    persist_directory="./",
     api_key="your-gemini-api-key"  # or set GEMINI_API_KEY env var
 )
 

@@ -316,7 +316,7 @@ class VectorStoreInterface(ABC):
         # Create and use a vector store
         vector_store = ChromaDBAdapter(
             collection_name="my_documents",
-            persist_directory="./data/chroma_db",
+            persist_directory="./",
             embedding_function=embedder,
         )
 

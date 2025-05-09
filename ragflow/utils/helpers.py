@@ -95,7 +95,7 @@ def load_text_files(
 
 def create_pipeline_from_env(
     collection_name: str = "ragflow",
-    persist_directory: str = "./data/chroma_db",
+    persist_directory: str = "./",
     env_var: str = "GEMINI_API_KEY",
     **kwargs,
 ) -> DefaultRAGPipeline:

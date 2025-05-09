@@ -55,37 +55,33 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
 ]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
 
 # Main dependencies will be added here using 'poetry add'
-langchain = ">=0.3.25"
-sentence-transformers = ">=4.1.0"
-pysqlite3-binary = ">=0.4.4"
+langchain = "^0.3.25"
+sentence-transformers = "^4.1.0"
+pysqlite3-binary = "^0.5.4"
+google-genai = "^1.14.0"
+chromadb = "^1.0.8"
 
 [tool.poetry.group.dev.dependencies]
 # Dev dependencies will be added here
-pre-commit = ">=3.3.3"
-ruff = ">=0.0.282"
-bandit = ">=1.7.5"
+pre-commit = "^3.3.3"
+ruff = "^0.0.282"
+bandit = "^1.7.5"
 
 [tool.poetry.group.test.dependencies]
 # Test dependencies will be added here
-pytest = ">=7.3.1"
-pytest-cov = ">=4.1.0"
+pytest = "^7.3.1"
+pytest-cov = "^4.1.0"
 
 [tool.poetry.group.docs.dependencies]
 # Docs dependencies will be added here
-mkdocs = ">=1.4.3"
-mkdocs-material = ">=9.1.17"
+mkdocs = "^1.4.3"
+mkdocs-material = "^9.1.17"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

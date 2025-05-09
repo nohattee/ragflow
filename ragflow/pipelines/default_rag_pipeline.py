@@ -73,7 +73,7 @@ class DefaultRAGPipeline(RAGPipeline):
 
     def __init__(
         self,
-        persist_directory: str = "./data/chroma_db",
+        persist_directory: str = "./",
         api_key: Optional[str] = None,
         embedding_model_name: str = "all-MiniLM-L6-v2",
         chunk_size: int = 1000,

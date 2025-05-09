@@ -8,6 +8,9 @@ WORKDIR /workspace
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #    && apt-get -y install --no-install-recommends <your-package-list>
 
+RUN pip install --upgrade pip
+RUN pipx install poetry
+
 # Optional: Copy requirements file and install Python dependencies
 # COPY requirements.txt .
 # RUN pip install --no-cache-dir -r requirements.txt

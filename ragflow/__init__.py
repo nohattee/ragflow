@@ -4,7 +4,7 @@ RAGFlow streamlines the development of RAG applications by providing
 intuitive interfaces and pre-configured pipelines built on top of LangChain.
 """
 
-__version__ = "0.1.0"
+import sys
 
 # Re-export core interfaces for easier imports
 from ragflow.core.interfaces import (
@@ -17,6 +17,12 @@ from ragflow.core.interfaces import (
 
 # Re-export default pipeline
 from ragflow.pipelines.default_rag_pipeline import DefaultRAGPipeline
+
+__version__ = "0.1.0"
+
+__import__("pysqlite3")
+
+sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 
 __all__ = [
     "ChunkingStrategyInterface",

@@ -92,7 +92,7 @@ Depending on your use case, you might need to install additional dependencies:
 
   .. code-block:: bash
 
-     pip install google-generativeai
+     pip install google-genai
 
 * For other vector stores or LLMs, install the appropriate packages as needed.
 
