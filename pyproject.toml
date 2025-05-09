@@ -43,26 +43,14 @@ convention = "google"
 exclude_dirs = ["tests", "examples"]
 skips = ["B101"]
 
-[build-system]
-requires = ["setuptools>=42.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-package-dir = {"" = "."}
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["ragflow*"]
-
-[project]
+[tool.poetry]
 name = "ragflow"
 version = "0.1.0"
 description = "A high-level framework for Retrieval Augmented Generation"
-authors = [
-    {name = "RAGFlow Team"}
-]
+authors = ["RAGFlow Team <team@example.com>"]  # Added a placeholder email
 readme = "README.md"
-requires-python = ">=3.8"
+license = "MIT"  # Assuming MIT based on typical open-source projects
+packages = [{include = "ragflow"}]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -74,23 +62,31 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
-dependencies = [
-    "langchain>=0.3.25",
-    "sentence-transformers>=2.2.2",
-    "pysqlite3-binary>=0.4.4",
-]
 
-[project.optional-dependencies]
-dev = [
-    "pre-commit>=3.3.3",
-    "ruff>=0.0.282",
-    "bandit>=1.7.5",
-]
-test = [
-    "pytest>=7.3.1",
-    "pytest-cov>=4.1.0",
-]
-docs = [
-    "mkdocs>=1.4.3",
-    "mkdocs-material>=9.1.17",
-]
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+
+# Main dependencies will be added here using 'poetry add'
+langchain = ">=0.3.25"
+sentence-transformers = ">=4.1.0"
+pysqlite3-binary = ">=0.4.4"
+
+[tool.poetry.group.dev.dependencies]
+# Dev dependencies will be added here
+pre-commit = ">=3.3.3"
+ruff = ">=0.0.282"
+bandit = ">=1.7.5"
+
+[tool.poetry.group.test.dependencies]
+# Test dependencies will be added here
+pytest = ">=7.3.1"
+pytest-cov = ">=4.1.0"
+
+[tool.poetry.group.docs.dependencies]
+# Docs dependencies will be added here
+mkdocs = ">=1.4.3"
+mkdocs-material = ">=9.1.17"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
