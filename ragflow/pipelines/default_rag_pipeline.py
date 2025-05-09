@@ -114,9 +114,7 @@ class DefaultRAGPipeline(RAGPipeline):
         """
         # Use API key from environment if not provided
         if api_key is None:
-            api_key = os.environ.get("GEMINI_API_KEY")
-            if api_key is None:
-                raise APIKeyError("Gemini", "GEMINI_API_KEY")
+            raise APIKeyError("Gemini", "GEMINI_API_KEY")
 
         # Validate key parameters
         if chunk_size <= 0:
