@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Start &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Concepts" href="concepts.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-your-first-rag-pipeline">Creating Your First RAG Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-documents">Adding Documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#querying-the-pipeline">Querying the Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-answers-with-sources">Getting Answers with Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-documents-from-files">Loading Documents from Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#complete-example">Complete Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">Concepts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/customization.html">Customizing RAGFlow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/document_loading.html">Document Loading Tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html">Core Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/adapters.html">Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="advanced/custom_adapters.html">Creating Custom Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced/performance_tuning.html">Performance Tuning</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Quick Start</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/quick_start.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="quick-start">
+<h1>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h1>
+<p>This guide will help you get started with RAGFlow in just a few minutes. We’ll cover the basic steps to create a simple Retrieval Augmented Generation (RAG) pipeline and use it to answer questions.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<p>Before starting, make sure you have:</p>
+<ol class="arabic simple">
+<li><p>Installed RAGFlow (see <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a>)</p></li>
+<li><p>An API key for an LLM (default is Gemini)</p></li>
+</ol>
+</section>
+<section id="creating-your-first-rag-pipeline">
+<h2>Creating Your First RAG Pipeline<a class="headerlink" href="#creating-your-first-rag-pipeline" title="Link to this heading"></a></h2>
+<p>Let’s start by creating a simple RAG pipeline using RAGFlow’s default components:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.pipelines.default_rag_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRAGPipeline</span>
+
+<span class="c1"># Create a default RAG pipeline</span>
+<span class="c1"># This uses ChromaDB, SentenceTransformers, and Gemini with sensible defaults</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="c1"># API key can be provided directly or set as GEMINI_API_KEY environment variable</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key-here&quot;</span><span class="p">,</span>
+    <span class="c1"># Optional: customize any parameters as needed</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.5</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="adding-documents">
+<h2>Adding Documents<a class="headerlink" href="#adding-documents" title="Link to this heading"></a></h2>
+<p>Next, let’s add some documents to the pipeline:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add documents as simple strings</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_texts</span><span class="p">([</span>
+    <span class="s2">&quot;RAGFlow is a Python library designed to streamline the development of &quot;</span>
+    <span class="s2">&quot;Retrieval Augmented Generation (RAG) applications. It provides a high-level, &quot;</span>
+    <span class="s2">&quot;flexible, and extensible framework.&quot;</span><span class="p">,</span>
+
+    <span class="s2">&quot;Retrieval Augmented Generation (RAG) is a technique that combines retrieval &quot;</span>
+    <span class="s2">&quot;of relevant documents with text generation by large language models. This &quot;</span>
+    <span class="s2">&quot;helps ground LLM outputs in factual information.&quot;</span><span class="p">,</span>
+
+    <span class="s2">&quot;RAGFlow offers sensible defaults and pre-configured pipelines to get developers &quot;</span>
+    <span class="s2">&quot;started quickly, while also allowing for customization and extension as needs evolve.&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="querying-the-pipeline">
+<h2>Querying the Pipeline<a class="headerlink" href="#querying-the-pipeline" title="Link to this heading"></a></h2>
+<p>Now you can ask questions about the documents:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ask a simple question</span>
+<span class="n">question</span> <span class="o">=</span> <span class="s2">&quot;What is RAGFlow and how does it relate to RAG?&quot;</span>
+<span class="n">answer</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Question: </span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Answer: </span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="getting-answers-with-sources">
+<h2>Getting Answers with Sources<a class="headerlink" href="#getting-answers-with-sources" title="Link to this heading"></a></h2>
+<p>RAGFlow can also provide the sources used to generate an answer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.utils.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_sources</span>
+
+<span class="c1"># Ask a question and get sources</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">query_with_sources</span><span class="p">(</span>
+    <span class="s2">&quot;What are the main benefits of using RAGFlow?&quot;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Answer: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;answer&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Sources:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">format_sources</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">include_content</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-documents-from-files">
+<h2>Loading Documents from Files<a class="headerlink" href="#loading-documents-from-files" title="Link to this heading"></a></h2>
+<p>RAGFlow includes helper functions to load documents from files:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.utils.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_text_files</span>
+
+<span class="c1"># Load documents from files</span>
+<span class="n">documents</span> <span class="o">=</span> <span class="n">load_text_files</span><span class="p">(</span><span class="s2">&quot;./sample_data&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span><span class="si">}</span><span class="s2"> documents from files&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="complete-example">
+<h2>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading"></a></h2>
+<p>Here’s a complete example that you can run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.pipelines.default_rag_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRAGPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.utils.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_sources</span>
+
+<span class="c1"># Load environment variables from .env file if present</span>
+<span class="n">load_dotenv</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">quickstart</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple quickstart example for RAGFlow.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Step 1: Create a default RAG pipeline</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+        <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;GEMINI_API_KEY&quot;</span><span class="p">),</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Step 2: Add some documents</span>
+    <span class="n">pipeline</span><span class="o">.</span><span class="n">add_texts</span><span class="p">([</span>
+        <span class="s2">&quot;RAGFlow is a Python library designed to streamline the development of &quot;</span>
+        <span class="s2">&quot;Retrieval Augmented Generation (RAG) applications. It provides a high-level, &quot;</span>
+        <span class="s2">&quot;flexible, and extensible framework.&quot;</span><span class="p">,</span>
+
+        <span class="s2">&quot;Retrieval Augmented Generation (RAG) is a technique that combines retrieval &quot;</span>
+        <span class="s2">&quot;of relevant documents with text generation by large language models. This &quot;</span>
+        <span class="s2">&quot;helps ground LLM outputs in factual information.&quot;</span><span class="p">,</span>
+
+        <span class="s2">&quot;RAGFlow offers sensible defaults and pre-configured pipelines to get developers &quot;</span>
+        <span class="s2">&quot;started quickly, while also allowing for customization and extension as needs evolve.&quot;</span>
+    <span class="p">])</span>
+
+    <span class="c1"># Step 3: Query the pipeline</span>
+    <span class="n">question</span> <span class="o">=</span> <span class="s2">&quot;What is RAGFlow and how does it relate to RAG?&quot;</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Question: </span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Answer: </span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Step 4: Advanced querying with sources</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- With Sources ---&quot;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">query_with_sources</span><span class="p">(</span>
+        <span class="s2">&quot;What are the main benefits of using RAGFlow?&quot;</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Answer: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;answer&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Sources:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">format_sources</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">include_content</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Quickstart complete! 🚀&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">quickstart</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<p>Now that you’ve created your first RAG pipeline with RAGFlow, you can:</p>
+<ul class="simple">
+<li><p>Learn more about <a class="reference internal" href="concepts.html"><span class="doc">Concepts</span></a> in RAG and RAGFlow</p></li>
+<li><p>Explore <a class="reference internal" href="user_guide/customization.html"><span class="doc">Customizing RAGFlow</span></a> to adapt the pipeline to your needs</p></li>
+<li><p>Check out the <a class="reference internal" href="tutorials/basic_rag.html"><span class="doc">Basic RAG Tutorial</span></a> for more detailed examples</p></li>
+<li><p>See the <a class="reference internal" href="api/pipelines.html"><span class="doc">Pipelines</span></a> reference for more detailed information on the DefaultRAGPipeline</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="concepts.html" class="btn btn-neutral float-right" title="Concepts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

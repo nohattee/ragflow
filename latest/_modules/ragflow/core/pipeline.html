@@ -1,0 +1,719 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ragflow.core.pipeline &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../concepts.html">Concepts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/customization.html">Customizing RAGFlow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/document_loading.html">Document Loading Tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/adapters.html">Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced/custom_adapters.html">Creating Custom Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced/performance_tuning.html">Performance Tuning</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ragflow.core.pipeline</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ragflow.core.pipeline</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Core pipeline implementation for RAGFlow.</span>
+
+<span class="sd">This module provides the base RAGPipeline class that orchestrates the</span>
+<span class="sd">Retrieval Augmented Generation (RAG) workflow by composing components</span>
+<span class="sd">that implement the core interfaces.</span>
+
+<span class="sd">The RAGPipeline coordinates document loading, chunking, embedding, storage,</span>
+<span class="sd">retrieval, and generation to enable powerful question-answering capabilities</span>
+<span class="sd">over custom document collections.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ChunkingStrategyInterface</span><span class="p">,</span>
+    <span class="n">Document</span><span class="p">,</span>
+    <span class="n">EmbeddingModelInterface</span><span class="p">,</span>
+    <span class="n">LLMInterface</span><span class="p">,</span>
+    <span class="n">RetrievalStrategyInterface</span><span class="p">,</span>
+    <span class="n">VectorStoreInterface</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="RAGPipeline">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.pipeline.RAGPipeline">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RAGPipeline</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base RAG pipeline that orchestrates the full RAG workflow.</span>
+
+<span class="sd">    The RAGPipeline coordinates all components in the RAG process:</span>
+<span class="sd">    1. Splitting documents into chunks using a chunking strategy</span>
+<span class="sd">    2. Embedding those chunks using an embedding model</span>
+<span class="sd">    3. Storing embeddings in a vector store</span>
+<span class="sd">    4. Retrieving relevant context based on queries</span>
+<span class="sd">    5. Generating answers using an LLM based on retrieved context</span>
+
+<span class="sd">    This design allows each component to be easily replaced, enabling</span>
+<span class="sd">    customization and extension of the RAG pipeline.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    --------</span>
+<span class="sd">        Creating a custom RAG pipeline:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from ragflow.adapters.chunking_strategies import (</span>
+<span class="sd">                RecursiveCharacterTextSplitterAdapter,</span>
+<span class="sd">            )</span>
+<span class="sd">            from ragflow.adapters.embedding_models import SentenceTransformersAdapter</span>
+<span class="sd">            from ragflow.adapters.vector_stores import ChromaDBAdapter</span>
+<span class="sd">            from ragflow.adapters.retrieval_strategies import SimpleSimilarityRetriever</span>
+<span class="sd">            from ragflow.adapters.llms import GeminiAdapter</span>
+<span class="sd">            from ragflow.core.pipeline import RAGPipeline</span>
+
+<span class="sd">            # Create the component instances</span>
+<span class="sd">            chunker = RecursiveCharacterTextSplitterAdapter(chunk_size=1000)</span>
+<span class="sd">            embedder = SentenceTransformersAdapter()</span>
+<span class="sd">            vector_store = ChromaDBAdapter(embedding_function=embedder)</span>
+<span class="sd">            retriever = SimpleSimilarityRetriever(vector_store=vector_store)</span>
+<span class="sd">            llm = GeminiAdapter(api_key=&quot;your-api-key&quot;)</span>
+
+<span class="sd">            # Create the pipeline</span>
+<span class="sd">            pipeline = RAGPipeline(</span>
+<span class="sd">                chunking_strategy=chunker,</span>
+<span class="sd">                embedding_model=embedder,</span>
+<span class="sd">                vector_store=vector_store,</span>
+<span class="sd">                retrieval_strategy=retriever,</span>
+<span class="sd">                llm=llm,</span>
+<span class="sd">            )</span>
+
+<span class="sd">            # Use the pipeline</span>
+<span class="sd">            pipeline.add_documents([Document(page_content=&quot;Example document&quot;)])</span>
+<span class="sd">            answer = pipeline.query(&quot;What is in the document?&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RAGPipeline.__init__">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.pipeline.RAGPipeline.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chunking_strategy</span><span class="p">:</span> <span class="n">ChunkingStrategyInterface</span><span class="p">,</span>
+        <span class="n">embedding_model</span><span class="p">:</span> <span class="n">EmbeddingModelInterface</span><span class="p">,</span>
+        <span class="n">vector_store</span><span class="p">:</span> <span class="n">VectorStoreInterface</span><span class="p">,</span>
+        <span class="n">retrieval_strategy</span><span class="p">:</span> <span class="n">RetrievalStrategyInterface</span><span class="p">,</span>
+        <span class="n">llm</span><span class="p">:</span> <span class="n">LLMInterface</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the RAG pipeline with its component parts.</span>
+
+<span class="sd">        This constructor assembles all the required components into a cohesive</span>
+<span class="sd">        pipeline that can process documents and answer queries. Each component</span>
+<span class="sd">        must implement its respective interface from the core.interfaces module.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chunking_strategy: Strategy for splitting documents into chunks.</span>
+<span class="sd">                Must implement the ChunkingStrategyInterface.</span>
+<span class="sd">            embedding_model: Model for generating vector embeddings.</span>
+<span class="sd">                Must implement the EmbeddingModelInterface.</span>
+<span class="sd">            vector_store: Store for saving and retrieving embeddings.</span>
+<span class="sd">                Must implement the VectorStoreInterface.</span>
+<span class="sd">            retrieval_strategy: Strategy for retrieving relevant documents.</span>
+<span class="sd">                Must implement the RetrievalStrategyInterface.</span>
+<span class="sd">            llm: Language model for generating answers.</span>
+<span class="sd">                Must implement the LLMInterface.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                # Create component instances</span>
+<span class="sd">                chunker = RecursiveCharacterTextSplitterAdapter()</span>
+<span class="sd">                embedder = SentenceTransformersAdapter()</span>
+<span class="sd">                vector_store = ChromaDBAdapter(embedding_function=embedder)</span>
+<span class="sd">                retriever = SimpleSimilarityRetriever(vector_store=vector_store)</span>
+<span class="sd">                llm = GeminiAdapter(api_key=&quot;your-api-key&quot;)</span>
+
+<span class="sd">                # Initialize the pipeline</span>
+<span class="sd">                pipeline = RAGPipeline(</span>
+<span class="sd">                    chunking_strategy=chunker,</span>
+<span class="sd">                    embedding_model=embedder,</span>
+<span class="sd">                    vector_store=vector_store,</span>
+<span class="sd">                    retrieval_strategy=retriever,</span>
+<span class="sd">                    llm=llm,</span>
+<span class="sd">                )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunking_strategy</span> <span class="o">=</span> <span class="n">chunking_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">embedding_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span> <span class="o">=</span> <span class="n">vector_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retrieval_strategy</span> <span class="o">=</span> <span class="n">retrieval_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm</span> <span class="o">=</span> <span class="n">llm</span></div>
+
+
+<div class="viewcode-block" id="RAGPipeline.add_documents">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.pipeline.RAGPipeline.add_documents">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process and add documents to the pipeline.</span>
+
+<span class="sd">        This method handles the complete document ingestion process:</span>
+<span class="sd">        1. Splits the documents into smaller chunks using the configured chunking strategy</span>
+<span class="sd">        2. Generates embeddings for these chunks using the embedding model</span>
+<span class="sd">        3. Adds the chunks and their embeddings to the vector store</span>
+
+<span class="sd">        This prepares the documents for later retrieval when answering queries.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            documents: List of Document objects to add to the pipeline.</span>
+<span class="sd">                Each Document should have page_content (text) and optional</span>
+<span class="sd">                metadata.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                # Create a pipeline</span>
+<span class="sd">                pipeline = RAGPipeline(...)</span>
+
+<span class="sd">                # Create Document objects</span>
+<span class="sd">                documents = [</span>
+<span class="sd">                    Document(</span>
+<span class="sd">                        page_content=&quot;RAGFlow is a framework for building RAG applications.&quot;,</span>
+<span class="sd">                        metadata={&quot;source&quot;: &quot;introduction.txt&quot;},</span>
+<span class="sd">                    ),</span>
+<span class="sd">                    Document(</span>
+<span class="sd">                        page_content=&quot;Vector stores enable efficient similarity search.&quot;,</span>
+<span class="sd">                        metadata={&quot;source&quot;: &quot;concepts.txt&quot;},</span>
+<span class="sd">                    ),</span>
+<span class="sd">                ]</span>
+
+<span class="sd">                # Add documents to the pipeline</span>
+<span class="sd">                pipeline.add_documents(documents)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Split documents into chunks</span>
+        <span class="n">chunked_documents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunking_strategy</span><span class="o">.</span><span class="n">split_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+        <span class="c1"># Add chunked documents to the vector store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">chunked_documents</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RAGPipeline.add_texts">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.pipeline.RAGPipeline.add_texts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_texts</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process and add text strings to the pipeline.</span>
+
+<span class="sd">        This is a convenience method that:</span>
+<span class="sd">        1. Converts texts to Document objects (with optional metadata)</span>
+<span class="sd">        2. Splits them into smaller chunks</span>
+<span class="sd">        3. Adds those chunks to the vector store</span>
+
+<span class="sd">        It&#39;s a simpler alternative to creating Document objects manually</span>
+<span class="sd">        when you have raw text strings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            texts: List of text strings to add to the pipeline.</span>
+<span class="sd">            metadata: Optional list of metadata dictionaries, one for each text.</span>
+<span class="sd">                If provided, must have the same length as texts. If not provided,</span>
+<span class="sd">                empty metadata will be used for all texts.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                # Create a pipeline</span>
+<span class="sd">                pipeline = RAGPipeline(...)</span>
+
+<span class="sd">                # Add texts</span>
+<span class="sd">                pipeline.add_texts(</span>
+<span class="sd">                    [&quot;Some text here.&quot;, &quot;Another piece of text.&quot;],</span>
+<span class="sd">                    metadata=[{&quot;source&quot;: &quot;text_source_1&quot;}, {&quot;source&quot;: &quot;text_source_2&quot;}],</span>
+<span class="sd">                )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert texts to Documents</span>
+        <span class="n">documents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">texts</span><span class="p">):</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">metadata</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+            <span class="n">documents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">m</span><span class="p">))</span>
+
+        <span class="c1"># Add documents to the pipeline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RAGPipeline.query">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.pipeline.RAGPipeline.query">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process a query through the RAG pipeline to generate an answer.</span>
+
+<span class="sd">        This method implements the core RAG workflow:</span>
+<span class="sd">        1. Retrieves relevant documents using the retrieval strategy</span>
+<span class="sd">        2. Passes the question and retrieved documents to the LLM</span>
+<span class="sd">        3. Returns the generated answer</span>
+
+<span class="sd">        The quality of the answer depends on:</span>
+<span class="sd">        - The relevance of the retrieved documents</span>
+<span class="sd">        - The capabilities of the LLM</span>
+<span class="sd">        - The pre-processing of documents (chunking)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            question: The query/question to answer. This can be a natural</span>
+<span class="sd">                language question, a statement, or any text that requires</span>
+<span class="sd">                a response based on the stored documents.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The generated answer to the question.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                # Create and populate a pipeline</span>
+<span class="sd">                pipeline = RAGPipeline(...)</span>
+<span class="sd">                pipeline.add_texts([&quot;Paris is the capital of France.&quot;])</span>
+
+<span class="sd">                # Query the pipeline</span>
+<span class="sd">                answer = pipeline.query(&quot;What is the capital of France?&quot;)</span>
+<span class="sd">                print(answer)</span>
+<span class="sd">                # Output might be: &quot;Paris is the capital of France.&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Retrieve relevant documents</span>
+        <span class="n">relevant_docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieval_strategy</span><span class="o">.</span><span class="n">get_relevant_documents</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+        <span class="c1"># Generate answer using LLM and retrieved context</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">generate_with_context</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">relevant_docs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">answer</span></div>
+
+
+<div class="viewcode-block" id="RAGPipeline.query_with_sources">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.pipeline.RAGPipeline.query_with_sources">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">query_with_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process a query and return both the answer and source documents.</span>
+
+<span class="sd">        Similar to query(), but also returns the source documents used</span>
+<span class="sd">        to generate the answer, enabling citation and verification. This</span>
+<span class="sd">        is useful for:</span>
+<span class="sd">        - Providing attribution for information</span>
+<span class="sd">        - Allowing users to verify the sources</span>
+<span class="sd">        - Debugging the RAG pipeline&#39;s retrieval performance</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            question: The query/question to answer. This can be a natural</span>
+<span class="sd">                language question, a statement, or any text that requires</span>
+<span class="sd">                a response based on the stored documents.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary containing:</span>
+<span class="sd">            - &#39;answer&#39;: The generated response as a string</span>
+<span class="sd">            - &#39;sources&#39;: List of Document objects used to generate the answer</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                # Create and populate a pipeline</span>
+<span class="sd">                pipeline = RAGPipeline(...)</span>
+<span class="sd">                pipeline.add_texts([&quot;The Eiffel Tower is in Paris.&quot;])</span>
+
+<span class="sd">                # Query the pipeline and get sources</span>
+<span class="sd">                result = pipeline.query_with_sources(&quot;Where is the Eiffel Tower?&quot;)</span>
+
+<span class="sd">                # Print the answer</span>
+<span class="sd">                print(result[&quot;answer&quot;])  # &quot;The Eiffel Tower is in Paris.&quot;</span>
+
+<span class="sd">                # Print the sources</span>
+<span class="sd">                for source_doc in result[&quot;sources&quot;]:</span>
+<span class="sd">                    print(source_doc.page_content, source_doc.metadata)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Retrieve relevant documents</span>
+        <span class="n">relevant_docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieval_strategy</span><span class="o">.</span><span class="n">get_relevant_documents</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+        <span class="c1"># Generate answer using LLM and retrieved context</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">llm</span><span class="o">.</span><span class="n">generate_with_context</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">relevant_docs</span><span class="p">)</span>
+
+        <span class="c1"># Return both the answer and the source documents</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span> <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="n">relevant_docs</span><span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AgenticRAGPipeline">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.pipeline.AgenticRAGPipeline">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AgenticRAGPipeline</span><span class="p">(</span><span class="n">RAGPipeline</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An agentic RAG pipeline that uses an LLM-based agent.</span>
+
+<span class="sd">    An agentic RAG pipeline that uses an LLM-based agent to decide when to retrieve</span>
+<span class="sd">    documents, rewrite queries, and generate answers.</span>
+
+<span class="sd">    This pipeline follows a more dynamic flow based on the agent&#39;s decisions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AgenticRAGPipeline.__init__">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.pipeline.AgenticRAGPipeline.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent_llm</span><span class="p">:</span> <span class="n">LLMInterface</span><span class="p">,</span>
+        <span class="n">generator_llm</span><span class="p">:</span> <span class="n">LLMInterface</span><span class="p">,</span>
+        <span class="n">retrieval_strategy</span><span class="p">:</span> <span class="n">RetrievalStrategyInterface</span><span class="p">,</span>
+        <span class="n">chunking_strategy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ChunkingStrategyInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">embedding_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EmbeddingModelInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">vector_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">VectorStoreInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the AgenticRAGPipeline with the given components.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            agent_llm: The LLM used for decision-making and query generation.</span>
+<span class="sd">            generator_llm: The LLM used for final answer generation.</span>
+<span class="sd">            retrieval_strategy: The strategy for retrieving relevant documents.</span>
+<span class="sd">            chunking_strategy: The strategy for chunking documents.</span>
+<span class="sd">            embedding_model: The embedding model for generating document embeddings.</span>
+<span class="sd">            vector_store: The vector store for storing document embeddings.</span>
+<span class="sd">            max_iterations: The maximum number of iterations for the agentic loop.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">chunking_strategy</span> <span class="ow">and</span> <span class="n">embedding_model</span> <span class="ow">and</span> <span class="n">vector_store</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="n">chunking_strategy</span><span class="o">=</span><span class="n">chunking_strategy</span><span class="p">,</span>
+                <span class="n">embedding_model</span><span class="o">=</span><span class="n">embedding_model</span><span class="p">,</span>
+                <span class="n">vector_store</span><span class="o">=</span><span class="n">vector_store</span><span class="p">,</span>
+                <span class="n">retrieval_strategy</span><span class="o">=</span><span class="n">retrieval_strategy</span><span class="p">,</span>
+                <span class="n">llm</span><span class="o">=</span><span class="n">generator_llm</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="n">chunking_strategy</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">embedding_model</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">vector_store</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Either all of chunking_strategy, embedding_model, and vector_store must be provided, or none.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chunking_strategy</span> <span class="o">=</span> <span class="n">chunking_strategy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">embedding_model</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span> <span class="o">=</span> <span class="n">vector_store</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">retrieval_strategy</span> <span class="o">=</span> <span class="n">retrieval_strategy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">llm</span> <span class="o">=</span> <span class="n">generator_llm</span>  <span class="c1"># Base class uses self.llm for its query methods</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_llm</span> <span class="o">=</span> <span class="n">agent_llm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generator_llm</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">generator_llm</span>  <span class="c1"># Explicit reference for clarity in agentic methods</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_iterations</span> <span class="o">=</span> <span class="n">max_iterations</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decide_retrieval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">history</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;You are an intelligent assistant. Given the question: &quot;</span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">History of previous attempts:</span>
+<span class="si">{</span><span class="n">history_str</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">history_str</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">history</span><span class="p">))</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;No previous attempts.&quot;</span><span class="si">}</span>
+
+<span class="s2">What is the best next step?</span>
+<span class="s2">Your available actions are:</span>
+<span class="s2">1. **retrieve**: If you need more information to answer the question. Provide the search query.</span>
+<span class="s2">2. **rewrite**: If the current question is not good for retrieval and needs reformulation. Provide the new query.</span>
+<span class="s2">3. **answer**: If you have enough information or believe you can answer directly. Provide the answer.</span>
+<span class="s2">4. **end**: If you&#39;ve tried and cannot answer the question.</span>
+
+<span class="s2">Respond with a JSON object with &quot;action&quot; and relevant keys (e.g., &quot;query&quot; for retrieve, &quot;new_query&quot; for rewrite, &quot;content&quot; for answer/end).</span>
+<span class="s2">Example for retrieve: </span><span class="se">{{</span><span class="s2">&quot;action&quot;: &quot;retrieve&quot;, &quot;query&quot;: &quot;details about X&quot;</span><span class="se">}}</span>
+<span class="s2">Example for answer: </span><span class="se">{{</span><span class="s2">&quot;action&quot;: &quot;answer&quot;, &quot;content&quot;: &quot;The answer is Y.&quot;</span><span class="se">}}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">response_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_llm</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+            <span class="n">decision</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response_text</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;action&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">decision</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;answer&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">response_text</span><span class="p">}</span>  <span class="c1"># Fallback</span>
+            <span class="k">return</span> <span class="n">decision</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Agent LLM did not return valid JSON: </span><span class="si">{</span><span class="n">response_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;answer&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">response_text</span><span class="p">}</span>  <span class="c1"># Fallback</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_relevance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">documents</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">context_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">])</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Given the question: &quot;</span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">And the following retrieved context:</span>
+<span class="s2">---</span>
+<span class="si">{</span><span class="n">context_str</span><span class="p">[:</span><span class="mi">2000</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">---</span>
+<span class="s2">Is the retrieved context relevant and sufficient to answer the question?</span>
+<span class="s2">Answer with only &quot;Yes&quot; or &quot;No&quot;.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">relevance_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_llm</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s2">&quot;yes&quot;</span> <span class="ow">in</span> <span class="n">relevance_response</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rewrite_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;The previous attempt to answer the question &quot;</span><span class="si">{</span><span class="n">original_question</span><span class="si">}</span><span class="s2">&quot; was not successful.</span>
+<span class="s2">Feedback: </span><span class="si">{</span><span class="n">feedback</span><span class="si">}</span>
+<span class="s2">Please rewrite the question to be more effective for information retrieval or to clarify the user&#39;s intent.</span>
+<span class="s2">Return only the rewritten question.</span>
+<span class="s2">Rewritten Question:&quot;&quot;&quot;</span>
+        <span class="n">rewritten_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_llm</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">rewritten_query</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_final_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator_llm</span><span class="o">.</span><span class="n">generate_with_context</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">documents</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_agentic_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Core agentic loop to process a question.</span>
+
+<span class="sd">        Returns a dictionary containing &quot;answer&quot;, &quot;sources&quot;, and &quot;history&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_query</span> <span class="o">=</span> <span class="n">question</span>
+        <span class="n">history</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">final_docs_for_answer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="s2">&quot;Could not determine an answer through the agentic process.&quot;</span>  <span class="c1"># Default answer</span>
+
+        <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iterations</span><span class="p">):</span>
+            <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Iteration </span><span class="si">{</span><span class="n">iteration</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">, Current query: &#39;</span><span class="si">{</span><span class="n">current_query</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">decision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decide_retrieval</span><span class="p">(</span><span class="n">current_query</span><span class="p">,</span> <span class="n">history</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">decision</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;action&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;retrieve&quot;</span><span class="p">:</span>
+                <span class="n">search_query</span> <span class="o">=</span> <span class="n">decision</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="n">current_query</span><span class="p">)</span>
+                <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Action: Retrieve documents with query: &#39;</span><span class="si">{</span><span class="n">search_query</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="p">)</span>
+                <span class="n">retrieved_docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieval_strategy</span><span class="o">.</span><span class="n">get_relevant_documents</span><span class="p">(</span>
+                    <span class="n">search_query</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_relevance</span><span class="p">(</span><span class="n">current_query</span><span class="p">,</span> <span class="n">retrieved_docs</span><span class="p">):</span>
+                    <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="s2">&quot;Action: Documents found relevant. Generating answer.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">final_docs_for_answer</span> <span class="o">=</span> <span class="n">retrieved_docs</span>
+                    <span class="n">answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_final_answer</span><span class="p">(</span>
+                        <span class="n">current_query</span><span class="p">,</span> <span class="n">final_docs_for_answer</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span>
+                        <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="n">final_docs_for_answer</span><span class="p">,</span>
+                        <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">history</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Action: Documents found not relevant.&quot;</span><span class="p">)</span>
+                    <span class="c1"># Provide feedback for rewrite based on irrelevance</span>
+                    <span class="n">feedback</span> <span class="o">=</span> <span class="s2">&quot;Retrieved documents were not relevant to the query.&quot;</span>
+                    <span class="c1"># Allow agent to decide next step, which could be rewrite</span>
+                    <span class="c1"># If agent decides to rewrite, it will happen in next iteration based on history.</span>
+                    <span class="c1"># Or, force a rewrite here:</span>
+                    <span class="n">current_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rewrite_query</span><span class="p">(</span>
+                        <span class="n">question</span><span class="p">,</span> <span class="n">feedback</span>
+                    <span class="p">)</span>  <span class="c1"># Use original question for context</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="ow">not</span> <span class="n">current_query</span> <span class="ow">or</span> <span class="n">current_query</span> <span class="o">==</span> <span class="n">question</span>
+                    <span class="p">):</span>  <span class="c1"># Avoid infinite loop on bad rewrite</span>
+                        <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="s2">&quot;Rewrite did not change query or failed. Ending with no relevant docs.&quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">answer</span> <span class="o">=</span> <span class="s2">&quot;I could not find relevant information after attempting retrieval and rewrite.&quot;</span>
+                        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span> <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">history</span><span class="p">}</span>
+                    <span class="n">final_docs_for_answer</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Reset docs as query changed</span>
+                    <span class="k">continue</span>  <span class="c1"># Continue to next iteration with rewritten query</span>
+
+            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;rewrite&quot;</span><span class="p">:</span>
+                <span class="n">new_query</span> <span class="o">=</span> <span class="n">decision</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;new_query&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">new_query</span> <span class="ow">or</span> <span class="n">new_query</span> <span class="o">==</span> <span class="n">current_query</span><span class="p">:</span>
+                    <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Action: Rewrite failed or produced same query (&#39;</span><span class="si">{</span><span class="n">new_query</span><span class="si">}</span><span class="s2">&#39;).&quot;</span>
+                    <span class="p">)</span>
+                    <span class="c1"># Attempt to answer with any last known good documents or end</span>
+                    <span class="k">if</span> <span class="n">final_docs_for_answer</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_relevance</span><span class="p">(</span>
+                        <span class="n">question</span><span class="p">,</span> <span class="n">final_docs_for_answer</span>
+                    <span class="p">):</span>
+                        <span class="n">answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_final_answer</span><span class="p">(</span>
+                            <span class="n">question</span><span class="p">,</span> <span class="n">final_docs_for_answer</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">answer</span> <span class="o">=</span> <span class="s2">&quot;I tried to rewrite the question but could not improve it to find an answer.&quot;</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span>
+                        <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="n">final_docs_for_answer</span><span class="p">,</span>
+                        <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">history</span><span class="p">,</span>
+                    <span class="p">}</span>
+
+                <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Action: Rewrite query from &#39;</span><span class="si">{</span><span class="n">current_query</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">new_query</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="p">)</span>
+                <span class="n">current_query</span> <span class="o">=</span> <span class="n">new_query</span>
+                <span class="n">final_docs_for_answer</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Reset retrieved docs for new query</span>
+                <span class="k">continue</span>
+
+            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;answer&quot;</span><span class="p">:</span>
+                <span class="n">answer</span> <span class="o">=</span> <span class="n">decision</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content&quot;</span><span class="p">,</span> <span class="s2">&quot;I&#39;m not sure how to respond to that.&quot;</span><span class="p">)</span>
+                <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action: Answer directly. Content: &#39;</span><span class="si">{</span><span class="n">answer</span><span class="p">[:</span><span class="mi">50</span><span class="p">]</span><span class="si">}</span><span class="s2">...&#39;&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span>
+                    <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="n">final_docs_for_answer</span><span class="p">,</span>
+                    <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">history</span><span class="p">,</span>
+                <span class="p">}</span>  <span class="c1"># Sources might be from a previous step</span>
+
+            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
+                <span class="n">answer</span> <span class="o">=</span> <span class="n">decision</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;content&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;I am unable to answer your question with the available information.&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action: End. Content: &#39;</span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span> <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">history</span><span class="p">}</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">answer</span> <span class="o">=</span> <span class="s2">&quot;I encountered an unexpected situation and cannot proceed.&quot;</span>
+                <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action: Unknown agent action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">. Ending.&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span> <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">history</span><span class="p">}</span>
+
+        <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Max iterations reached.&quot;</span><span class="p">)</span>
+        <span class="c1"># Fallback if max_iterations reached without a definitive answer</span>
+        <span class="k">if</span> <span class="n">final_docs_for_answer</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_relevance</span><span class="p">(</span>
+            <span class="n">question</span><span class="p">,</span> <span class="n">final_docs_for_answer</span>
+        <span class="p">):</span>  <span class="c1"># Use original question for relevance check</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_final_answer</span><span class="p">(</span>
+                <span class="n">question</span><span class="p">,</span> <span class="n">final_docs_for_answer</span>
+            <span class="p">)</span>  <span class="c1"># Use original question for generation</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="s2">&quot;I&#39;ve tried multiple steps but could not find a satisfactory answer to your question.&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span> <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="n">final_docs_for_answer</span><span class="p">,</span> <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">history</span><span class="p">}</span>
+
+<div class="viewcode-block" id="AgenticRAGPipeline.query">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.pipeline.AgenticRAGPipeline.query">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes a query using the agentic loop.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            question: The user&#39;s question.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The generated answer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agentic_loop</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;answer&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="AgenticRAGPipeline.query_with_sources">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.pipeline.AgenticRAGPipeline.query_with_sources">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">query_with_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a query using the agentic loop and returns answer with sources and history.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agentic_loop</span><span class="p">(</span><span class="n">question</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

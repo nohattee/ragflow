@@ -1,0 +1,882 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ragflow.core.interfaces &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../concepts.html">Concepts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/customization.html">Customizing RAGFlow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/document_loading.html">Document Loading Tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/adapters.html">Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced/custom_adapters.html">Creating Custom Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced/performance_tuning.html">Performance Tuning</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ragflow.core.interfaces</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ragflow.core.interfaces</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Core interfaces for RAGFlow.</span>
+
+<span class="sd">This module defines the fundamental interfaces that form the building blocks</span>
+<span class="sd">of the RAG (Retrieval Augmented Generation) pipeline. Each interface represents</span>
+<span class="sd">a component with a specific role in the pipeline:</span>
+
+<span class="sd">- ChunkingStrategyInterface: Splitting documents into smaller chunks</span>
+<span class="sd">- EmbeddingModelInterface: Converting text into vector embeddings</span>
+<span class="sd">- VectorStoreInterface: Storing and retrieving vector embeddings</span>
+<span class="sd">- RetrievalStrategyInterface: Retrieving relevant documents based on a query</span>
+<span class="sd">- LLMInterface: Generating text based on context and prompts</span>
+
+<span class="sd">These interfaces promote modularity, testability, and extensibility by</span>
+<span class="sd">defining standard contracts that concrete implementations must follow.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="Document">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.Document">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Document</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A document with text content and optional metadata.</span>
+
+<span class="sd">    This class represents the core unit of text data in RAGFlow, containing</span>
+<span class="sd">    both the actual content (text) and associated metadata. The metadata can</span>
+<span class="sd">    hold information such as source, author, creation date, or any other</span>
+<span class="sd">    relevant attributes.</span>
+
+<span class="sd">    Documents are used throughout the RAG pipeline and are especially important</span>
+<span class="sd">    during retrieval, where metadata can help filter results or provide</span>
+<span class="sd">    attribution information.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        page_content (str): The text content of the document.</span>
+<span class="sd">        metadata (Dict[str, Any]): Optional metadata associated with the document.</span>
+<span class="sd">            Common keys include &#39;source&#39;, &#39;author&#39;, &#39;created_at&#39;, etc.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    --------</span>
+<span class="sd">        Creating a simple document:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            doc = Document(page_content=&quot;This is a sample document.&quot;)</span>
+
+<span class="sd">        Creating a document with metadata:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            doc = Document(</span>
+<span class="sd">                page_content=&quot;This document contains important information.&quot;,</span>
+<span class="sd">                metadata={</span>
+<span class="sd">                    &quot;source&quot;: &quot;research_paper.pdf&quot;,</span>
+<span class="sd">                    &quot;author&quot;: &quot;Smith, J.&quot;,</span>
+<span class="sd">                    &quot;year&quot;: 2024,</span>
+<span class="sd">                    &quot;page&quot;: 42,</span>
+<span class="sd">                },</span>
+<span class="sd">            )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Document.__init__">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.Document.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a Document.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            page_content: The text content of the document. This is the actual</span>
+<span class="sd">                textual information that will be processed and retrieved.</span>
+<span class="sd">            metadata: Optional metadata associated with the document. This can</span>
+<span class="sd">                include information like source, author, creation date, page number,</span>
+<span class="sd">                or any other relevant attributes. Defaults to an empty dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_content</span> <span class="o">=</span> <span class="n">page_content</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span> <span class="ow">or</span> <span class="p">{}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ChunkingStrategyInterface">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.ChunkingStrategyInterface">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChunkingStrategyInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interface for splitting documents into smaller chunks.</span>
+
+<span class="sd">    A chunking strategy is responsible for dividing documents into smaller,</span>
+<span class="sd">    more manageable pieces that can be processed independently. This is</span>
+<span class="sd">    particularly important for:</span>
+<span class="sd">    1. Large documents that might exceed context limits of LLMs</span>
+<span class="sd">    2. Improving retrieval granularity by breaking content into focused segments</span>
+<span class="sd">    3. Optimizing embedding and storage efficiency</span>
+
+<span class="sd">    Different chunking strategies can be implemented based on the specific needs:</span>
+<span class="sd">    - Splitting by character/token count</span>
+<span class="sd">    - Splitting by semantic units (paragraphs, sections)</span>
+<span class="sd">    - Splitting with overlaps to maintain context across chunks</span>
+<span class="sd">    - Using language-aware chunking for better semantics</span>
+
+<span class="sd">    Implementations of this interface should ensure that:</span>
+<span class="sd">    - The original document metadata is preserved or appropriately modified in each chunk</span>
+<span class="sd">    - The text is split in a way that maintains semantic coherence when possible</span>
+<span class="sd">    - The chunking parameters (size, overlap) can be configured</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    --------</span>
+<span class="sd">        Using a chunking strategy:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            chunker = RecursiveCharacterTextSplitterAdapter(</span>
+<span class="sd">                chunk_size=1000, chunk_overlap=200</span>
+<span class="sd">            )</span>
+<span class="sd">            documents = [Document(page_content=&quot;A very long document...&quot;)]</span>
+<span class="sd">            chunks = chunker.split_documents(documents)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ChunkingStrategyInterface.split_documents">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.ChunkingStrategyInterface.split_documents">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">split_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Split a list of documents into smaller chunks.</span>
+
+<span class="sd">        This method takes a list of Document objects, splits their content</span>
+<span class="sd">        into smaller chunks, and returns a new list of Document objects</span>
+<span class="sd">        representing those chunks. The metadata from the original documents</span>
+<span class="sd">        should be preserved or appropriately modified in each chunk.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            documents: List of Document objects to split. Each document&#39;s</span>
+<span class="sd">                page_content will be split into chunks.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of Document objects representing the chunks. This will typically</span>
+<span class="sd">            contain more documents than the input list, as each input document</span>
+<span class="sd">            may produce multiple chunks.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                chunker = RecursiveCharacterTextSplitterAdapter(chunk_size=1000)</span>
+<span class="sd">                long_docs = [</span>
+<span class="sd">                    Document(</span>
+<span class="sd">                        page_content=&quot;Long document 1...&quot;,</span>
+<span class="sd">                        metadata={&quot;source&quot;: &quot;doc1.txt&quot;},</span>
+<span class="sd">                    ),</span>
+<span class="sd">                    Document(</span>
+<span class="sd">                        page_content=&quot;Long document 2...&quot;,</span>
+<span class="sd">                        metadata={&quot;source&quot;: &quot;doc2.txt&quot;},</span>
+<span class="sd">                    ),</span>
+<span class="sd">                ]</span>
+<span class="sd">                chunks = chunker.split_documents(long_docs)</span>
+<span class="sd">                # chunks will contain multiple Document objects, each with a portion of the</span>
+<span class="sd">                # original text and the preserved or modified metadata</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ChunkingStrategyInterface.split_text">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.ChunkingStrategyInterface.split_text">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">split_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Split a text string into smaller chunks.</span>
+
+<span class="sd">        This method takes a single text string and splits it into a list of</span>
+<span class="sd">        smaller text chunks according to the strategy&#39;s algorithm. This is</span>
+<span class="sd">        a lower-level method that doesn&#39;t deal with Document objects and</span>
+<span class="sd">        their metadata.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: A text string to split into chunks.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of text chunks. The original text is divided into multiple</span>
+<span class="sd">            smaller strings according to the chunking strategy.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                chunker = RecursiveCharacterTextSplitterAdapter(chunk_size=1000)</span>
+<span class="sd">                long_text = &quot;This is a very long document that needs to be split...&quot;</span>
+<span class="sd">                chunks = chunker.split_text(long_text)</span>
+<span class="sd">                # chunks will be a list of strings, each up to 1000 characters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EmbeddingModelInterface">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.EmbeddingModelInterface">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmbeddingModelInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interface for embedding models that convert text into vector representations.</span>
+
+<span class="sd">    Embedding models transform text into numerical vector representations that</span>
+<span class="sd">    capture semantic meaning, enabling similarity searches and other vector</span>
+<span class="sd">    operations. These embeddings are at the core of RAG systems, as they allow</span>
+<span class="sd">    for efficient retrieval of relevant content based on semantic similarity.</span>
+
+<span class="sd">    Different embedding models have different characteristics:</span>
+<span class="sd">    - Varying vector dimensions (e.g., 384, 768, 1536)</span>
+<span class="sd">    - Different training data and optimization targets</span>
+<span class="sd">    - Trade-offs between speed, accuracy, and resource requirements</span>
+<span class="sd">    - Support for different languages and domains</span>
+
+<span class="sd">    Implementations of this interface should focus on:</span>
+<span class="sd">    - Providing a consistent way to generate embeddings across different models</span>
+<span class="sd">    - Handling batching for efficiency when embedding multiple documents</span>
+<span class="sd">    - Proper normalization and preprocessing of input text</span>
+<span class="sd">    - Appropriate error handling for model-specific issues</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    --------</span>
+<span class="sd">        Using an embedding model:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            embedder = SentenceTransformersAdapter(model_name=&quot;all-MiniLM-L6-v2&quot;)</span>
+
+<span class="sd">            # Embed a single query</span>
+<span class="sd">            query_embedding = embedder.embed_query(&quot;What is RAGFlow?&quot;)</span>
+
+<span class="sd">            # Embed multiple documents</span>
+<span class="sd">            doc_embeddings = embedder.embed_documents(</span>
+<span class="sd">                [</span>
+<span class="sd">                    &quot;RAGFlow is a framework for building RAG applications.&quot;,</span>
+<span class="sd">                    &quot;It uses various components like embedding models and vector stores.&quot;,</span>
+<span class="sd">                ]</span>
+<span class="sd">            )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EmbeddingModelInterface.embed_query">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.EmbeddingModelInterface.embed_query">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate an embedding for a query string.</span>
+
+<span class="sd">        This method converts a single query string into a vector embedding</span>
+<span class="sd">        that represents its semantic meaning. The embedding can then be used</span>
+<span class="sd">        for similarity search against document embeddings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: The query text to embed. This can be a question, phrase,</span>
+<span class="sd">                or any text that needs to be converted to a vector representation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[float]: The vector embedding of the query.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                embedder = SentenceTransformersAdapter()</span>
+<span class="sd">                query_embedding = embedder.embed_query(&quot;How does RAG work?&quot;)</span>
+<span class="sd">                # query_embedding will be a list of floats (e.g., [0.1, 0.2, ...])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="EmbeddingModelInterface.embed_documents">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.EmbeddingModelInterface.embed_documents">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate embeddings for a list of documents.</span>
+
+<span class="sd">        This method converts multiple document strings into vector embeddings</span>
+<span class="sd">        that represent their semantic meanings. These embeddings can be stored</span>
+<span class="sd">        in a vector database for later retrieval.</span>
+
+<span class="sd">        Implementations should handle batching efficiently to optimize performance</span>
+<span class="sd">        when embedding large numbers of documents.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            documents: List of document texts to embed. Each string in this list</span>
+<span class="sd">                will be converted to a separate embedding vector.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[List[float]]: A list of embeddings, where each inner list is a</span>
+<span class="sd">            vector embedding for a document. The order of embeddings corresponds</span>
+<span class="sd">            to the order of the input documents.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                embedder = SentenceTransformersAdapter()</span>
+<span class="sd">                texts_to_embed = [</span>
+<span class="sd">                    &quot;RAGFlow provides flexible interfaces.&quot;,</span>
+<span class="sd">                    &quot;Embeddings are crucial for semantic search.&quot;,</span>
+<span class="sd">                ]</span>
+<span class="sd">                document_embeddings = embedder.embed_documents(texts_to_embed)</span>
+<span class="sd">                # document_embeddings will be a list of lists of floats</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="VectorStoreInterface">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.VectorStoreInterface">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorStoreInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interface for vector stores that store and retrieve embeddings.</span>
+
+<span class="sd">    Vector stores are specialized databases that efficiently store and</span>
+<span class="sd">    search vector embeddings, enabling similarity search operations. They</span>
+<span class="sd">    are a critical component in RAG systems for retrieving documents that</span>
+<span class="sd">    are semantically similar to a query.</span>
+
+<span class="sd">    Key capabilities of vector stores include:</span>
+<span class="sd">    - Efficient storage of high-dimensional vector embeddings</span>
+<span class="sd">    - Fast approximate nearest neighbor (ANN) search algorithms</span>
+<span class="sd">    - Ability to store metadata alongside vectors for filtering</span>
+<span class="sd">    - Support for various distance metrics (cosine, Euclidean, dot product)</span>
+<span class="sd">    - Persistence and scaling of vector collections</span>
+
+<span class="sd">    Common vector store implementations include:</span>
+<span class="sd">    - ChromaDB, Pinecone, Weaviate, Qdrant, Milvus, Faiss</span>
+<span class="sd">    - PostgreSQL with pgvector extension</span>
+<span class="sd">    - Redis with RediSearch/RedisVL</span>
+<span class="sd">    - In-memory implementations for testing</span>
+
+<span class="sd">    Implementations of this interface should ensure:</span>
+<span class="sd">    - Consistent handling of documents and their embeddings</span>
+<span class="sd">    - Proper error handling for database operations</span>
+<span class="sd">    - Efficient vector search functionality</span>
+<span class="sd">    - Appropriate metadata storage and filtering</span>
+<span class="sd">    - Efficiently update or delete existing embeddings</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    --------</span>
+<span class="sd">        Using a vector store:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            embedder = SentenceTransformersAdapter()</span>
+<span class="sd">            vector_store = ChromaDBAdapter(embedding_function=embedder)</span>
+
+<span class="sd">            # Add documents</span>
+<span class="sd">            vector_store.add_texts(</span>
+<span class="sd">                [&quot;Document 1 about apples&quot;, &quot;Document 2 about oranges&quot;],</span>
+<span class="sd">                metadata=[{&quot;source&quot;: &quot;doc1&quot;}, {&quot;source&quot;: &quot;doc2&quot;}],</span>
+<span class="sd">            )</span>
+
+<span class="sd">            # Search for similar documents</span>
+<span class="sd">            results = vector_store.similarity_search(&quot;Tell me about fruits&quot;, k=1)</span>
+<span class="sd">            print(results)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="VectorStoreInterface.add_documents">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.VectorStoreInterface.add_documents">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+        <span class="n">embeddings</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add documents to the vector store.</span>
+
+<span class="sd">        This method stores document content and metadata in the vector store.</span>
+<span class="sd">        If embeddings are provided, they are used directly; otherwise, the</span>
+<span class="sd">        vector store will generate embeddings using its embedding function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            documents: List of document dictionaries to store. Each dictionary</span>
+<span class="sd">                should contain at least a &#39;page_content&#39; key with the document text</span>
+<span class="sd">                and a &#39;metadata&#39; key with a dictionary of associated metadata.</span>
+<span class="sd">            embeddings: Optional pre-computed embeddings for the documents. If provided,</span>
+<span class="sd">                these should be a list of embedding vectors (list of floats) with the</span>
+<span class="sd">                same length as the documents list. If not provided, the vector store</span>
+<span class="sd">                will use its embedding function to generate embeddings.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                embedder = SentenceTransformersAdapter()</span>
+<span class="sd">                vector_store = ChromaDBAdapter(embedding_function=embedder)</span>
+<span class="sd">                docs_to_add = [</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;page_content&quot;: &quot;RAGFlow is a framework for RAG applications.&quot;,</span>
+<span class="sd">                        &quot;metadata&quot;: {&quot;source&quot;: &quot;readme.md&quot;, &quot;section&quot;: &quot;intro&quot;},</span>
+<span class="sd">                    },</span>
+<span class="sd">                    {</span>
+<span class="sd">                        &quot;page_content&quot;: &quot;Vector stores enable efficient similarity search.&quot;,</span>
+<span class="sd">                        &quot;metadata&quot;: {&quot;source&quot;: &quot;guide.md&quot;, &quot;section&quot;: &quot;concepts&quot;},</span>
+<span class="sd">                    },</span>
+<span class="sd">                ]</span>
+
+<span class="sd">                # Add documents without providing embeddings (will be generated)</span>
+<span class="sd">                vector_store.add_documents(docs_to_add)</span>
+
+<span class="sd">                # Or with pre-computed embeddings</span>
+<span class="sd">                doc_texts = [doc[&quot;page_content&quot;] for doc in docs_to_add]</span>
+<span class="sd">                embeddings = embedder.embed_documents(doc_texts)</span>
+<span class="sd">                vector_store.add_documents(docs_to_add, embeddings=embeddings)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VectorStoreInterface.add_texts">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.VectorStoreInterface.add_texts">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_texts</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add text strings with optional metadata to the vector store.</span>
+
+<span class="sd">        This is a convenience method that takes raw text strings and optional</span>
+<span class="sd">        metadata, converts them to the document format, and stores them in</span>
+<span class="sd">        the vector store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            texts: List of text strings to add. Each string will be stored</span>
+<span class="sd">                as the content of a document.</span>
+<span class="sd">            metadata: Optional list of metadata dictionaries, one for each text.</span>
+<span class="sd">                If provided, this list should have the same length as the texts list.</span>
+<span class="sd">                If not provided, empty metadata will be used for all texts.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                embedder = SentenceTransformersAdapter()</span>
+<span class="sd">                vector_store = ChromaDBAdapter(embedding_function=embedder)</span>
+<span class="sd">                texts = [&quot;First document text&quot;, &quot;Second document text&quot;]</span>
+<span class="sd">                metadata = [{&quot;source&quot;: &quot;doc1&quot;}, {&quot;source&quot;: &quot;doc2&quot;}]</span>
+<span class="sd">                vector_store.add_texts(texts, metadata=metadata)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VectorStoreInterface.similarity_search">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.VectorStoreInterface.similarity_search">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">similarity_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve documents similar to the query.</span>
+
+<span class="sd">        This method converts the query string to an embedding and then</span>
+<span class="sd">        finds the most similar documents in the vector store based on</span>
+<span class="sd">        a distance metric (typically cosine similarity).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: The query string to find similar documents for. This</span>
+<span class="sd">                will be converted to an embedding using the vector store&#39;s</span>
+<span class="sd">                embedding function.</span>
+<span class="sd">            k: Number of similar documents to return. Defaults to 5.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of Document objects, ranked by similarity.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                embedder = SentenceTransformersAdapter()</span>
+<span class="sd">                vector_store = ChromaDBAdapter(embedding_function=embedder)</span>
+<span class="sd">                query_embedding = embedder.embed_query(&quot;Search query&quot;)</span>
+<span class="sd">                # Assume documents have been added</span>
+<span class="sd">                results = vector_store.similarity_search_by_vector(query_embedding, k=2)</span>
+<span class="sd">                for doc in results:</span>
+<span class="sd">                    print(doc.page_content)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VectorStoreInterface.similarity_search_by_vector">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.VectorStoreInterface.similarity_search_by_vector">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">similarity_search_by_vector</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">embedding</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve documents similar to the provided embedding vector.</span>
+
+<span class="sd">        This method allows searching with a pre-computed embedding vector</span>
+<span class="sd">        instead of a text query. This is useful when you&#39;ve already generated</span>
+<span class="sd">        an embedding using a specific model or when you want to ensure exact</span>
+<span class="sd">        control over the embedding used for search.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embedding: The query vector embedding (list of floats).</span>
+<span class="sd">            k: The number of similar documents to retrieve. Defaults to 4.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of Document objects, ranked by similarity.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                embedder = SentenceTransformersAdapter()</span>
+<span class="sd">                vector_store = ChromaDBAdapter(embedding_function=embedder)</span>
+<span class="sd">                query_embedding = embedder.embed_query(&quot;Search query&quot;)</span>
+<span class="sd">                # Assume documents have been added</span>
+<span class="sd">                results = vector_store.similarity_search_by_vector(query_embedding, k=2)</span>
+<span class="sd">                for doc in results:</span>
+<span class="sd">                    print(doc.page_content)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RetrievalStrategyInterface">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.RetrievalStrategyInterface">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RetrievalStrategyInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interface for retrieving relevant documents based on a query.</span>
+
+<span class="sd">    A retrieval strategy is responsible for selecting the most relevant documents</span>
+<span class="sd">    from a corpus based on a user query. This is a critical component in RAG systems</span>
+<span class="sd">    as it determines what context information will be provided to the LLM.</span>
+
+<span class="sd">    Different retrieval strategies can be implemented based on specific needs:</span>
+<span class="sd">    - Simple similarity-based retrieval using vector embeddings</span>
+<span class="sd">    - Hybrid retrieval combining vector similarity with keyword search</span>
+<span class="sd">    - Re-ranking strategies that apply additional filtering or scoring</span>
+<span class="sd">    - Multi-step retrieval that iteratively refines results</span>
+
+<span class="sd">    Implementations of this interface should focus on:</span>
+<span class="sd">    - Integrating with a vector store or other search mechanism</span>
+<span class="sd">    - Applying appropriate filtering or re-ranking logic if needed</span>
+<span class="sd">    - Handling different query types and complexities</span>
+<span class="sd">    - Efficiently querying the underlying vector store or search index</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    --------</span>
+<span class="sd">        Using a retrieval strategy:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            embedder = SentenceTransformersAdapter()</span>
+<span class="sd">            vector_store = ChromaDBAdapter(embedding_function=embedder)</span>
+<span class="sd">            # Add documents to vector_store first...</span>
+<span class="sd">            retriever = SimpleSimilarityRetriever(vector_store=vector_store, k=5)</span>
+<span class="sd">            relevant_docs = retriever.get_relevant_documents(</span>
+<span class="sd">                &quot;What are the key features of RAGFlow?&quot;</span>
+<span class="sd">            )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RetrievalStrategyInterface.get_relevant_documents">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.RetrievalStrategyInterface.get_relevant_documents">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_relevant_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve documents that are relevant to the given query.</span>
+
+<span class="sd">        This method searches through the available documents and returns</span>
+<span class="sd">        those that are most relevant to answering the provided query.</span>
+<span class="sd">        The exact matching algorithm depends on the implementation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: The search query to find relevant documents for.</span>
+<span class="sd">                This is typically a question or information need expressed</span>
+<span class="sd">                as a natural language string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of Document objects considered relevant to the query.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                retriever = SimpleSimilarityRetriever(vector_store=my_vector_store, k=3)</span>
+<span class="sd">                documents = retriever.get_relevant_documents(</span>
+<span class="sd">                    &quot;How to build a RAG pipeline?&quot;</span>
+<span class="sd">                )</span>
+<span class="sd">                # documents will be a list of up to 3 Document objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="RetrievalStrategyInterface.get_relevant_documents_with_scores">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.RetrievalStrategyInterface.get_relevant_documents_with_scores">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_relevant_documents_with_scores</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Document</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve relevant documents along with their relevance scores.</span>
+
+<span class="sd">        Similar to get_relevant_documents(), but also returns a relevance</span>
+<span class="sd">        score for each document. This allows consumers to make decisions</span>
+<span class="sd">        based on the confidence of the retrieval system.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: The search query to find relevant documents for.</span>
+<span class="sd">                This is typically a question or information need expressed</span>
+<span class="sd">                as a natural language string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of tuples, each containing a Document object and its</span>
+<span class="sd">            corresponding relevance score (float) representing its relevance.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                retriever = SimpleSimilarityRetriever(vector_store=my_vector_store)</span>
+<span class="sd">                results = retriever.get_relevant_documents_with_scores(&quot;Query text&quot;)</span>
+<span class="sd">                for doc, score in results:</span>
+<span class="sd">                    print(f&quot;Score: {score}, Content: {doc.page_content}&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="LLMInterface">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.LLMInterface">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LLMInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interface for language models that generate text based on prompts and context.</span>
+
+<span class="sd">    A language model is responsible for the &quot;generation&quot; part of Retrieval Augmented</span>
+<span class="sd">    Generation. It takes a user query along with relevant context documents and</span>
+<span class="sd">    generates a coherent, informative response.</span>
+
+<span class="sd">    This interface abstracts away the details of different LLM providers and models,</span>
+<span class="sd">    allowing RAGFlow to work with various backends:</span>
+<span class="sd">    - OpenAI models (GPT-3.5, GPT-4, etc.)</span>
+<span class="sd">    - Google models (Gemini, PaLM, etc.)</span>
+<span class="sd">    - Anthropic models (Claude)</span>
+<span class="sd">    - Open-source models (Llama, Mistral, etc.)</span>
+<span class="sd">    - Local models running on-premises</span>
+
+<span class="sd">    Implementations of this interface should focus on:</span>
+<span class="sd">    - Managing communication with the LLM API or local model</span>
+<span class="sd">    - Crafting appropriate prompts that incorporate the retrieved context</span>
+<span class="sd">    - Handling API-specific parameters like temperature, max tokens, etc.</span>
+<span class="sd">    - Proper error handling for API quotas, rate limits, etc.</span>
+<span class="sd">    - Handling of rate limits, API errors, and retries if applicable</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    --------</span>
+<span class="sd">        Using an LLM interface:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            llm = GeminiAdapter(api_key=&quot;YOUR_API_KEY&quot;)</span>
+<span class="sd">            answer = llm.generate(&quot;What is the capital of France?&quot;)</span>
+<span class="sd">            print(answer)  # Expected: Paris</span>
+
+<span class="sd">        Generating with context:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            llm = GeminiAdapter(api_key=&quot;your-api-key&quot;)</span>
+<span class="sd">            vector_store = ChromaDBAdapter(...)</span>
+<span class="sd">            retriever = SimpleSimilarityRetriever(vector_store=vector_store)</span>
+
+<span class="sd">            # Get relevant documents for a query</span>
+<span class="sd">            query = &quot;What is the impact of chunking on RAG performance?&quot;</span>
+<span class="sd">            relevant_docs = retriever.get_relevant_documents(query)</span>
+
+<span class="sd">            # Generate answer using context</span>
+<span class="sd">            answer = llm.generate_with_context(query, relevant_docs)</span>
+<span class="sd">            print(answer)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LLMInterface.generate">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.LLMInterface.generate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate text based on a prompt.</span>
+
+<span class="sd">        This basic generation method takes a prompt and optional context</span>
+<span class="sd">        dictionary and returns generated text from the language model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prompt: The prompt string to generate text from. This can be a</span>
+<span class="sd">                question, instruction, or any text that the LLM should</span>
+<span class="sd">                continue or respond to.</span>
+<span class="sd">            context: Optional additional context or parameters to pass to the</span>
+<span class="sd">                language model. This can include configuration options or</span>
+<span class="sd">                additional information that influences generation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A string containing the generated text.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                llm = GeminiAdapter(api_key=&quot;your-api-key&quot;, temperature=0.7)</span>
+
+<span class="sd">                # Simple prompt without context</span>
+<span class="sd">                response = llm.generate(&quot;Write a haiku about programming.&quot;)</span>
+
+<span class="sd">                # With additional context/parameters</span>
+<span class="sd">                response = llm.generate(</span>
+<span class="sd">                    prompt=&quot;What is machine learning?&quot;,</span>
+<span class="sd">                    context={&quot;max_tokens&quot;: 100, &quot;style&quot;: &quot;concise&quot;},</span>
+<span class="sd">                )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="LLMInterface.generate_with_context">
+<a class="viewcode-back" href="../../../api/core.html#ragflow.core.interfaces.LLMInterface.generate_with_context">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_with_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a response to a query using retrieved context documents.</span>
+
+<span class="sd">        This is the core RAG method that combines the user query with</span>
+<span class="sd">        relevant retrieved documents to generate an informed response.</span>
+<span class="sd">        The implementation should properly format the prompt to include</span>
+<span class="sd">        both the query and the context in a way that the LLM can use.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: The user&#39;s query or question.</span>
+<span class="sd">            context: A list of Document objects providing relevant context for the query.</span>
+<span class="sd">                These are typically retrieved from a vector store.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A string containing the generated answer.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        --------</span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                llm = GeminiAdapter(api_key=&quot;YOUR_API_KEY&quot;)</span>
+<span class="sd">                retrieved_documents = [</span>
+<span class="sd">                    Document(page_content=&quot;The sky is blue during the day.&quot;),</span>
+<span class="sd">                    Document(page_content=&quot;The sun is a star.&quot;),</span>
+<span class="sd">                ]</span>
+<span class="sd">                answer = llm.generate_with_context(</span>
+<span class="sd">                    &quot;Why is the sky blue?&quot;, context=retrieved_documents</span>
+<span class="sd">                )</span>
+<span class="sd">                # Answer will be based on the provided documents and the LLM&#39;s knowledge</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

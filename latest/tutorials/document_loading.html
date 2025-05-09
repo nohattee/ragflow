@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document Loading Tutorial &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Core Module" href="../api/core.html" />
+    <link rel="prev" title="Basic RAG Tutorial" href="basic_rag.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/customization.html">Customizing RAGFlow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Document Loading Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#supported-document-types">Supported Document Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-document-loading">Basic Document Loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-pdf-documents">Loading PDF Documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-web-pages">Loading Web Pages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-markdown-files">Loading Markdown Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#working-with-structured-data">Working with Structured Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#handling-document-metadata">Handling Document Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#combining-multiple-document-sources">Combining Multiple Document Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preprocessing-documents">Preprocessing Documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#complete-example">Complete Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices-for-document-loading">Best Practices for Document Loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/adapters.html">Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/custom_adapters.html">Creating Custom Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/performance_tuning.html">Performance Tuning</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Document Loading Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/document_loading.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="document-loading-tutorial">
+<h1>Document Loading Tutorial<a class="headerlink" href="#document-loading-tutorial" title="Link to this heading"></a></h1>
+<p>This tutorial explains how to load various document types into RAGFlow for processing and retrieval. Properly loading and preprocessing documents is a critical first step in building an effective RAG system.</p>
+<section id="supported-document-types">
+<h2>Supported Document Types<a class="headerlink" href="#supported-document-types" title="Link to this heading"></a></h2>
+<p>RAGFlow provides utilities to load multiple document formats:</p>
+<ul class="simple">
+<li><p>Plain text files (<cite>.txt</cite>)</p></li>
+<li><p>PDF documents (<cite>.pdf</cite>)</p></li>
+<li><p>Markdown files (<cite>.md</cite>)</p></li>
+<li><p>HTML/web pages</p></li>
+<li><p>CSV and spreadsheet data</p></li>
+<li><p>JSON and structured data</p></li>
+</ul>
+</section>
+<section id="basic-document-loading">
+<h2>Basic Document Loading<a class="headerlink" href="#basic-document-loading" title="Link to this heading"></a></h2>
+<p>Let’s start with the simplest case - loading plain text files:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.utils.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_text_files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.pipelines.default_rag_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRAGPipeline</span>
+
+<span class="c1"># Initialize your pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">()</span>
+
+<span class="c1"># Load all text files from a directory</span>
+<span class="n">documents</span> <span class="o">=</span> <span class="n">load_text_files</span><span class="p">(</span>
+    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;./data/text&quot;</span><span class="p">,</span>
+    <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Include subdirectories</span>
+    <span class="n">glob_pattern</span><span class="o">=</span><span class="s2">&quot;*.txt&quot;</span>  <span class="c1"># Only .txt files</span>
+<span class="p">)</span>
+
+<span class="c1"># Add the documents to the pipeline</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span><span class="si">}</span><span class="s2"> documents&quot;</span><span class="p">)</span>
+
+<span class="c1"># Preview the first document</span>
+<span class="k">if</span> <span class="n">documents</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;First document content: </span><span class="si">{</span><span class="n">documents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">page_content</span><span class="p">[:</span><span class="mi">100</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;First document metadata: </span><span class="si">{</span><span class="n">documents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>load_text_files</cite> function returns a list of <cite>Document</cite> objects with the document content in the <cite>page_content</cite> field and metadata in the <cite>metadata</cite> dictionary. The metadata includes the file path, filename, and other file-specific information.</p>
+</section>
+<section id="loading-pdf-documents">
+<h2>Loading PDF Documents<a class="headerlink" href="#loading-pdf-documents" title="Link to this heading"></a></h2>
+<p>Processing PDF documents requires the <cite>pdfplumber</cite> or <cite>pypdf</cite> library:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ragflow<span class="o">[</span>pdf<span class="o">]</span><span class="w">  </span><span class="c1"># Installs the PDF dependencies</span>
+</pre></div>
+</div>
+<p>Then you can load PDF documents:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.utils.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_pdf_files</span>
+
+<span class="c1"># Load PDF documents</span>
+<span class="n">pdf_documents</span> <span class="o">=</span> <span class="n">load_pdf_files</span><span class="p">(</span>
+    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;./data/pdfs&quot;</span><span class="p">,</span>
+    <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">include_page_numbers</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># Adds page numbers to metadata</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">pdf_documents</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-web-pages">
+<h2>Loading Web Pages<a class="headerlink" href="#loading-web-pages" title="Link to this heading"></a></h2>
+<p>For loading web pages, you’ll need the <cite>requests</cite> and <cite>beautifulsoup4</cite> libraries:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ragflow<span class="o">[</span>web<span class="o">]</span><span class="w">  </span><span class="c1"># Installs web loading dependencies</span>
+</pre></div>
+</div>
+<p>Then you can load web content:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.utils.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_web_pages</span>
+
+<span class="c1"># Define URLs to load</span>
+<span class="n">urls</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;https://en.wikipedia.org/wiki/Retrieval-augmented_generation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;https://example.com/another-page&quot;</span>
+<span class="p">]</span>
+
+<span class="c1"># Load web pages</span>
+<span class="n">web_documents</span> <span class="o">=</span> <span class="n">load_web_pages</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="n">urls</span><span class="p">)</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">web_documents</span><span class="p">)</span>
+
+<span class="c1"># Or load a single page:</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.utils.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_web_page</span>
+
+<span class="n">single_page_docs</span> <span class="o">=</span> <span class="n">load_web_page</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://example.com/important-data&quot;</span><span class="p">)</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">single_page_docs</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-markdown-files">
+<h2>Loading Markdown Files<a class="headerlink" href="#loading-markdown-files" title="Link to this heading"></a></h2>
+<p>Markdown files can be loaded similarly to text files:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.utils.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_markdown_files</span>
+
+<span class="n">markdown_documents</span> <span class="o">=</span> <span class="n">load_markdown_files</span><span class="p">(</span>
+    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;./docs/markdown&quot;</span><span class="p">,</span>
+    <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">extract_metadata</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># Extract YAML frontmatter as metadata</span>
+<span class="p">)</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">markdown_documents</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="working-with-structured-data">
+<h2>Working with Structured Data<a class="headerlink" href="#working-with-structured-data" title="Link to this heading"></a></h2>
+<p>For CSV, JSON, or other structured data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.utils.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_csv_file</span><span class="p">,</span> <span class="n">load_json_file</span>
+
+<span class="c1"># Load CSV file</span>
+<span class="n">csv_documents</span> <span class="o">=</span> <span class="n">load_csv_file</span><span class="p">(</span>
+    <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;./data/products.csv&quot;</span><span class="p">,</span>
+    <span class="n">column_to_text</span><span class="o">=</span><span class="s2">&quot;description&quot;</span><span class="p">,</span>  <span class="c1"># Column containing main text</span>
+    <span class="n">metadata_columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;product_id&quot;</span><span class="p">,</span> <span class="s2">&quot;category&quot;</span><span class="p">,</span> <span class="s2">&quot;price&quot;</span><span class="p">]</span>  <span class="c1"># Add these as metadata</span>
+<span class="p">)</span>
+
+<span class="c1"># Load JSON file</span>
+<span class="n">json_documents</span> <span class="o">=</span> <span class="n">load_json_file</span><span class="p">(</span>
+    <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;./data/articles.json&quot;</span><span class="p">,</span>
+    <span class="n">jq_pattern</span><span class="o">=</span><span class="s2">&quot;.items[]&quot;</span><span class="p">,</span>  <span class="c1"># JQ pattern to extract items (optional)</span>
+    <span class="n">content_key</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>  <span class="c1"># Key containing text content</span>
+    <span class="n">metadata_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="s2">&quot;tags&quot;</span><span class="p">]</span>  <span class="c1"># Keys to include as metadata</span>
+<span class="p">)</span>
+
+<span class="c1"># Add all documents</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">csv_documents</span><span class="p">)</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">json_documents</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="handling-document-metadata">
+<h2>Handling Document Metadata<a class="headerlink" href="#handling-document-metadata" title="Link to this heading"></a></h2>
+<p>Metadata is critical for document retrieval and attribution. Here’s how to work with it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+
+<span class="c1"># Create a document with custom metadata</span>
+<span class="n">custom_doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
+    <span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;This is a document with custom metadata.&quot;</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;manual input&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="s2">&quot;Jane Smith&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-03-15&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;example&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;importance&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Add a list of custom documents</span>
+<span class="n">custom_documents</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;First document&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;doc1.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">}),</span>
+    <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;Second document&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;doc2.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">})</span>
+<span class="p">]</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">custom_documents</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="combining-multiple-document-sources">
+<h2>Combining Multiple Document Sources<a class="headerlink" href="#combining-multiple-document-sources" title="Link to this heading"></a></h2>
+<p>In real applications, you often need to combine documents from multiple sources:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load documents from various sources</span>
+<span class="n">text_docs</span> <span class="o">=</span> <span class="n">load_text_files</span><span class="p">(</span><span class="s2">&quot;./data/text&quot;</span><span class="p">)</span>
+<span class="n">pdf_docs</span> <span class="o">=</span> <span class="n">load_pdf_files</span><span class="p">(</span><span class="s2">&quot;./data/pdfs&quot;</span><span class="p">)</span>
+<span class="n">web_docs</span> <span class="o">=</span> <span class="n">load_web_pages</span><span class="p">([</span><span class="s2">&quot;https://example.com/page1&quot;</span><span class="p">,</span> <span class="s2">&quot;https://example.com/page2&quot;</span><span class="p">])</span>
+
+<span class="c1"># Combine all documents</span>
+<span class="n">all_documents</span> <span class="o">=</span> <span class="n">text_docs</span> <span class="o">+</span> <span class="n">pdf_docs</span> <span class="o">+</span> <span class="n">web_docs</span>
+
+<span class="c1"># Add specific metadata to each source</span>
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">text_docs</span><span class="p">:</span>
+    <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;text_file&quot;</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">pdf_docs</span><span class="p">:</span>
+    <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pdf&quot;</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">web_docs</span><span class="p">:</span>
+    <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;web&quot;</span>
+
+<span class="c1"># Add all documents to the pipeline</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">all_documents</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocessing-documents">
+<h2>Preprocessing Documents<a class="headerlink" href="#preprocessing-documents" title="Link to this heading"></a></h2>
+<p>Before adding documents to the pipeline, you might want to preprocess them:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">preprocess_document</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply custom preprocessing to a document.&quot;&quot;&quot;</span>
+    <span class="c1"># Convert content to lowercase</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="c1"># Remove specific patterns or clean text</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;unwanted text&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Return a new document with processed content</span>
+    <span class="k">return</span> <span class="n">Document</span><span class="p">(</span>
+        <span class="n">page_content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span>
+    <span class="p">)</span>
+
+<span class="c1"># Load documents</span>
+<span class="n">documents</span> <span class="o">=</span> <span class="n">load_text_files</span><span class="p">(</span><span class="s2">&quot;./data/text&quot;</span><span class="p">)</span>
+
+<span class="c1"># Preprocess each document</span>
+<span class="n">processed_documents</span> <span class="o">=</span> <span class="p">[</span><span class="n">preprocess_document</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span>
+
+<span class="c1"># Add processed documents to pipeline</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">processed_documents</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="complete-example">
+<h2>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading"></a></h2>
+<p>Here’s a complete example that loads documents from multiple sources:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dotenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dotenv</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.pipelines.default_rag_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRAGPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.utils.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">load_text_files</span><span class="p">,</span>
+    <span class="n">load_pdf_files</span><span class="p">,</span>
+    <span class="n">load_markdown_files</span><span class="p">,</span>
+    <span class="n">load_web_pages</span>
+<span class="p">)</span>
+
+<span class="c1"># Load environment variables</span>
+<span class="n">load_dotenv</span><span class="p">()</span>
+
+<span class="c1"># Initialize the pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;GEMINI_API_KEY&quot;</span><span class="p">),</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">200</span>
+<span class="p">)</span>
+
+<span class="c1"># Load documents from different sources</span>
+<span class="n">text_docs</span> <span class="o">=</span> <span class="n">load_text_files</span><span class="p">(</span><span class="s2">&quot;./data/text&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pdf_docs</span> <span class="o">=</span> <span class="n">load_pdf_files</span><span class="p">(</span><span class="s2">&quot;./data/pdfs&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">md_docs</span> <span class="o">=</span> <span class="n">load_markdown_files</span><span class="p">(</span><span class="s2">&quot;./data/markdown&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">web_docs</span> <span class="o">=</span> <span class="n">load_web_pages</span><span class="p">([</span>
+    <span class="s2">&quot;https://example.com/page1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;https://example.com/page2&quot;</span>
+<span class="p">])</span>
+
+<span class="c1"># Add source information to metadata</span>
+<span class="k">for</span> <span class="n">docs</span><span class="p">,</span> <span class="n">source_type</span> <span class="ow">in</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">text_docs</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">pdf_docs</span><span class="p">,</span> <span class="s2">&quot;pdf&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">md_docs</span><span class="p">,</span> <span class="s2">&quot;markdown&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">web_docs</span><span class="p">,</span> <span class="s2">&quot;web&quot;</span><span class="p">)</span>
+<span class="p">]:</span>
+    <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+        <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;source_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_type</span>
+
+<span class="c1"># Combine all documents</span>
+<span class="n">all_documents</span> <span class="o">=</span> <span class="n">text_docs</span> <span class="o">+</span> <span class="n">pdf_docs</span> <span class="o">+</span> <span class="n">md_docs</span> <span class="o">+</span> <span class="n">web_docs</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">all_documents</span><span class="p">)</span><span class="si">}</span><span class="s2"> total documents&quot;</span><span class="p">)</span>
+
+<span class="c1"># Add documents to the pipeline</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">all_documents</span><span class="p">)</span>
+
+<span class="c1"># Test with a query</span>
+<span class="n">question</span> <span class="o">=</span> <span class="s2">&quot;What information do we have about retrieval augmented generation?&quot;</span>
+<span class="n">answer</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Question: </span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Answer: </span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="best-practices-for-document-loading">
+<h2>Best Practices for Document Loading<a class="headerlink" href="#best-practices-for-document-loading" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Preserve Source Information:</strong>
+- Always include source information in metadata (filename, URL, page number)
+- This enables proper attribution and verification of information</p></li>
+<li><p><strong>Chunk Appropriately:</strong>
+- PDF and web documents often need different chunking strategies than plain text
+- Consider the document structure when choosing chunk size and overlap</p></li>
+<li><p><strong>Handle Encoding Issues:</strong>
+- Be prepared to handle text encoding issues, especially with PDFs and web content
+- Use try/except blocks to handle problematic files</p></li>
+<li><p><strong>Filter Irrelevant Content:</strong>
+- For web pages, consider removing navigation elements, ads, and other non-content
+- For PDFs, you might need to filter out headers, footers, and page numbers</p></li>
+<li><p><strong>Batch Processing:</strong>
+- For large document collections, process files in batches
+- This prevents memory issues and allows for progress tracking</p></li>
+</ol>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<p><strong>PDF Loading Issues:</strong>
+- Ensure PDF files are not password-protected
+- Some PDFs may be scanned images requiring OCR (not supported by default)
+- Try both <cite>pypdf</cite> and <cite>pdfplumber</cite> backends to see which works better</p>
+<p><strong>Web Loading Issues:</strong>
+- Some websites block scraping attempts
+- Consider adding delays between requests with <cite>load_web_pages(urls, delay_seconds=2)</cite>
+- Use a proper user-agent string with <cite>load_web_pages(urls, user_agent=”…”)</cite></p>
+<p><strong>Character Encoding:</strong>
+- Specify encoding when loading text files: <cite>load_text_files(directory, encoding=”utf-8”)</cite>
+- For non-standard encodings, preprocess files before loading</p>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<p>Now that you know how to load various document types into RAGFlow, you can:</p>
+<ul class="simple">
+<li><p>Explore customizing the chunking strategy for different document types</p></li>
+<li><p>Learn how to filter and process documents based on metadata</p></li>
+<li><p>Set up a document refresh strategy for regularly updated content</p></li>
+</ul>
+<p>Check the <a class="reference internal" href="../advanced/custom_adapters.html"><span class="doc">Creating Custom Adapters</span></a> guide to learn how to create custom document loaders for specialized formats.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="basic_rag.html" class="btn btn-neutral float-left" title="Basic RAG Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/core.html" class="btn btn-neutral float-right" title="Core Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

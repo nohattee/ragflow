@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pipelines &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Adapters" href="adapters.html" />
+    <link rel="prev" title="Core Module" href="core.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/customization.html">Customizing RAGFlow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/document_loading.html">Document Loading Tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pipelines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-ragflow.pipelines.default_rag_pipeline">Default RAG Pipeline</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline"><code class="docutils literal notranslate"><span class="pre">DefaultRAGPipeline</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.__init__"><code class="docutils literal notranslate"><span class="pre">DefaultRAGPipeline.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.from_existing_db"><code class="docutils literal notranslate"><span class="pre">DefaultRAGPipeline.from_existing_db()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.get_config"><code class="docutils literal notranslate"><span class="pre">DefaultRAGPipeline.get_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.add_documents"><code class="docutils literal notranslate"><span class="pre">DefaultRAGPipeline.add_documents()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.add_texts"><code class="docutils literal notranslate"><span class="pre">DefaultRAGPipeline.add_texts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.query"><code class="docutils literal notranslate"><span class="pre">DefaultRAGPipeline.query()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.query_with_sources"><code class="docutils literal notranslate"><span class="pre">DefaultRAGPipeline.query_with_sources()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="adapters.html">Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/custom_adapters.html">Creating Custom Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/performance_tuning.html">Performance Tuning</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Pipelines</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/pipelines.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pipelines">
+<h1>Pipelines<a class="headerlink" href="#pipelines" title="Link to this heading"></a></h1>
+<p>This page documents the pipeline implementations provided by RAGFlow.</p>
+<section id="module-ragflow.pipelines.default_rag_pipeline">
+<span id="default-rag-pipeline"></span><h2>Default RAG Pipeline<a class="headerlink" href="#module-ragflow.pipelines.default_rag_pipeline" title="Link to this heading"></a></h2>
+<p>Default RAG Pipeline implementation for RAGFlow.</p>
+<p>This module provides a pre-configured RAGPipeline implementation that uses the default
+component stack specified in the PRD:</p>
+<ul class="simple">
+<li><p>Vector Store: ChromaDBAdapter (implementing VectorStoreInterface)</p></li>
+<li><p>Embedding Model: SentenceTransformersAdapter (implementing EmbeddingModelInterface)</p></li>
+<li><p>LLM: GeminiAdapter (implementing LLMInterface)</p></li>
+<li><p>Chunking Strategy: RecursiveCharacterTextSplitterAdapter (implementing ChunkingStrategyInterface)</p></li>
+<li><p>Retrieval Strategy: SimilarityRetrievalStrategy (implementing RetrievalStrategyInterface)</p></li>
+</ul>
+<p>This ready-to-use pipeline enables developers to quickly get started with RAG
+without having to configure each component individually.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ragflow.pipelines.default_rag_pipeline.</span></span><span class="sig-name descname"><span class="pre">DefaultRAGPipeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">persist_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all-MiniLM-L6-v2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrieval_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ragflow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gemini-2.5-flash-preview-04-17'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/pipelines/default_rag_pipeline.html#DefaultRAGPipeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#ragflow.core.pipeline.RAGPipeline" title="ragflow.core.pipeline.RAGPipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">RAGPipeline</span></code></a></p>
+<p>A pre-configured RAG pipeline that uses the default component stack.</p>
+<p>This class provides a convenient way to create a fully functional RAG pipeline
+with sensible defaults, requiring minimal configuration from users. It
+abstracts away the complexity of setting up individual components.</p>
+<p>The DefaultRAGPipeline uses the following components:
+- ChromaDBAdapter for vector storage
+- SentenceTransformersAdapter for generating embeddings
+- GeminiAdapter for the language model
+- RecursiveCharacterTextSplitterAdapter for chunking documents
+- SimpleSimilarityRetriever for retrieving relevant documents</p>
+<p>You can configure these components through the constructor parameters.</p>
+<section id="examples">
+<h3>Examples:<a class="headerlink" href="#examples" title="Link to this heading"></a></h3>
+<blockquote>
+<div><p>Basic usage with environment variable for API key:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set GEMINI_API_KEY environment variable first</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">()</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_texts</span><span class="p">([</span><span class="s2">&quot;Document 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Document 2&quot;</span><span class="p">])</span>
+<span class="n">answer</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;What is the content of the documents?&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Providing API key directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-gemini-api-key&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Customizing component parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">retrieval_k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.5</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">persist_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all-MiniLM-L6-v2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrieval_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ragflow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gemini-2.5-flash-preview-04-17'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/pipelines/default_rag_pipeline.html#DefaultRAGPipeline.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the DefaultRAGPipeline with configurable parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>persist_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Directory where ChromaDB will store its data</p></li>
+<li><p><strong>api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>) – Gemini API key (if not provided, will look for GEMINI_API_KEY env var)</p></li>
+<li><p><strong>embedding_model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the SentenceTransformers model to use</p></li>
+<li><p><strong>chunk_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Size of document chunks in characters</p></li>
+<li><p><strong>chunk_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Overlap between consecutive chunks in characters</p></li>
+<li><p><strong>retrieval_k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of documents to retrieve for each query</p></li>
+<li><p><strong>collection_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the ChromaDB collection to use</p></li>
+<li><p><strong>separators</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – List of separators to use for text splitting (default: [”nn”, “n”, “ “, “”])</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Controls randomness in LLM generation (0.0 to 1.0)</p></li>
+<li><p><strong>max_tokens</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>) – Maximum number of tokens for LLM to generate</p></li>
+<li><p><strong>top_p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Nucleus sampling parameter for LLM (0.0 to 1.0)</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Top-k sampling parameter for LLM</p></li>
+<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the Gemini model to use</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments to pass to the underlying components</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="core.html#ragflow.core.errors.APIKeyError" title="ragflow.core.errors.APIKeyError"><strong>APIKeyError</strong></a> – If no Gemini API key is provided or found in environment</p></li>
+<li><p><a class="reference internal" href="core.html#ragflow.core.errors.ConfigurationError" title="ragflow.core.errors.ConfigurationError"><strong>ConfigurationError</strong></a> – If any parameter has an invalid value</p></li>
+<li><p><a class="reference internal" href="core.html#ragflow.core.errors.VectorStoreError" title="ragflow.core.errors.VectorStoreError"><strong>VectorStoreError</strong></a> – If there’s an issue initializing the vector store</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.from_existing_db">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_existing_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">persist_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all-MiniLM-L6-v2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ragflow'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/pipelines/default_rag_pipeline.html#DefaultRAGPipeline.from_existing_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.from_existing_db" title="Link to this definition"></a></dt>
+<dd><p>Create a DefaultRAGPipeline from an existing ChromaDB database.</p>
+<p>This factory method makes it easy to resume using a previously
+created pipeline with an existing vector database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>persist_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the existing ChromaDB directory</p></li>
+<li><p><strong>api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>) – Gemini API key (if not provided, will look for GEMINI_API_KEY env var)</p></li>
+<li><p><strong>embedding_model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the SentenceTransformers model to use</p></li>
+<li><p><strong>collection_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the ChromaDB collection to use</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments to pass to the pipeline</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A configured DefaultRAGPipeline instance</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="core.html#ragflow.core.errors.VectorStoreError" title="ragflow.core.errors.VectorStoreError"><strong>VectorStoreError</strong></a> – If the ChromaDB directory doesn’t exist or is invalid</p></li>
+<li><p><a class="reference internal" href="core.html#ragflow.core.errors.APIKeyError" title="ragflow.core.errors.APIKeyError"><strong>APIKeyError</strong></a> – If no Gemini API key is provided or found in environment</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline" title="ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline"><em>DefaultRAGPipeline</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/pipelines/default_rag_pipeline.html#DefaultRAGPipeline.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.get_config" title="Link to this definition"></a></dt>
+<dd><p>Get the current configuration of the pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing the configuration parameters</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><em>Dict</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><em>Any</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.add_documents">
+<span class="sig-name descname"><span class="pre">add_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">documents</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.add_documents" title="Link to this definition"></a></dt>
+<dd><p>Process and add documents to the pipeline.</p>
+<p>This method handles the complete document ingestion process:
+1. Splits the documents into smaller chunks using the configured chunking strategy
+2. Generates embeddings for these chunks using the embedding model
+3. Adds the chunks and their embeddings to the vector store</p>
+<p>This prepares the documents for later retrieval when answering queries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>documents</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference internal" href="core.html#ragflow.core.interfaces.Document" title="ragflow.core.interfaces.Document"><em>Document</em></a><em>]</em>) – List of Document objects to add to the pipeline.
+Each Document should have page_content (text) and optional
+metadata.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<section id="id1">
+<h4>Examples:<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">RAGPipeline</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="c1"># Create Document objects</span>
+<span class="n">documents</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Document</span><span class="p">(</span>
+        <span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;RAGFlow is a framework for building RAG applications.&quot;</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;introduction.txt&quot;</span><span class="p">},</span>
+    <span class="p">),</span>
+    <span class="n">Document</span><span class="p">(</span>
+        <span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;Vector stores enable efficient similarity search.&quot;</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;concepts.txt&quot;</span><span class="p">},</span>
+    <span class="p">),</span>
+<span class="p">]</span>
+
+<span class="c1"># Add documents to the pipeline</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.add_texts">
+<span class="sig-name descname"><span class="pre">add_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.add_texts" title="Link to this definition"></a></dt>
+<dd><p>Process and add text strings to the pipeline.</p>
+<p>This is a convenience method that:
+1. Converts texts to Document objects (with optional metadata)
+2. Splits them into smaller chunks
+3. Adds those chunks to the vector store</p>
+<p>It’s a simpler alternative to creating Document objects manually
+when you have raw text strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>texts</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – List of text strings to add to the pipeline.</p></li>
+<li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><em>Dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><em>Any</em></a><em>]</em><em>] </em><em>| </em><em>None</em>) – Optional list of metadata dictionaries, one for each text.
+If provided, must have the same length as texts. If not provided,
+empty metadata will be used for all texts.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<section id="id2">
+<h4>Examples:<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">RAGPipeline</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="c1"># Add texts</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_texts</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">&quot;Some text here.&quot;</span><span class="p">,</span> <span class="s2">&quot;Another piece of text.&quot;</span><span class="p">],</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;text_source_1&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;text_source_2&quot;</span><span class="p">}],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.query" title="Link to this definition"></a></dt>
+<dd><p>Process a query through the RAG pipeline to generate an answer.</p>
+<p>This method implements the core RAG workflow:
+1. Retrieves relevant documents using the retrieval strategy
+2. Passes the question and retrieved documents to the LLM
+3. Returns the generated answer</p>
+<p>The quality of the answer depends on:
+- The relevance of the retrieved documents
+- The capabilities of the LLM
+- The pre-processing of documents (chunking)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>question</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The query/question to answer. This can be a natural
+language question, a statement, or any text that requires
+a response based on the stored documents.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated answer to the question.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+<section id="id3">
+<h4>Examples:<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create and populate a pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">RAGPipeline</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_texts</span><span class="p">([</span><span class="s2">&quot;Paris is the capital of France.&quot;</span><span class="p">])</span>
+
+<span class="c1"># Query the pipeline</span>
+<span class="n">answer</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;What is the capital of France?&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+<span class="c1"># Output might be: &quot;Paris is the capital of France.&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.query_with_sources">
+<span class="sig-name descname"><span class="pre">query_with_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ragflow.pipelines.default_rag_pipeline.DefaultRAGPipeline.query_with_sources" title="Link to this definition"></a></dt>
+<dd><p>Process a query and return both the answer and source documents.</p>
+<p>Similar to query(), but also returns the source documents used
+to generate the answer, enabling citation and verification. This
+is useful for:
+- Providing attribution for information
+- Allowing users to verify the sources
+- Debugging the RAG pipeline’s retrieval performance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>question</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The query/question to answer. This can be a natural
+language question, a statement, or any text that requires
+a response based on the stored documents.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>‘answer’: The generated response as a string</p></li>
+<li><p>’sources’: List of Document objects used to generate the answer</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing</p>
+</dd>
+</dl>
+<section id="id4">
+<h4>Examples:<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create and populate a pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">RAGPipeline</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">pipeline</span><span class="o">.</span><span class="n">add_texts</span><span class="p">([</span><span class="s2">&quot;The Eiffel Tower is in Paris.&quot;</span><span class="p">])</span>
+
+<span class="c1"># Query the pipeline and get sources</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">query_with_sources</span><span class="p">(</span><span class="s2">&quot;Where is the Eiffel Tower?&quot;</span><span class="p">)</span>
+
+<span class="c1"># Print the answer</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;answer&quot;</span><span class="p">])</span>  <span class="c1"># &quot;The Eiffel Tower is in Paris.&quot;</span>
+
+<span class="c1"># Print the sources</span>
+<span class="k">for</span> <span class="n">source_doc</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;sources&quot;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">source_doc</span><span class="o">.</span><span class="n">page_content</span><span class="p">,</span> <span class="n">source_doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</dd></dl>
+
+</section>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>persist_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
+<li><p><strong>api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>embedding_model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
+<li><p><strong>chunk_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>chunk_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>retrieval_k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>collection_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
+<li><p><strong>separators</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>max_tokens</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>top_p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="core.html" class="btn btn-neutral float-left" title="Core Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="adapters.html" class="btn btn-neutral float-right" title="Adapters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

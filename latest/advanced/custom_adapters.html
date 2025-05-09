@@ -1,0 +1,853 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creating Custom Adapters &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Performance Tuning" href="performance_tuning.html" />
+    <link rel="prev" title="Utilities" href="../api/utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/customization.html">Customizing RAGFlow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/document_loading.html">Document Loading Tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/adapters.html">Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Creating Custom Adapters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#understanding-ragflow-s-interface-architecture">Understanding RAGFlow’s Interface Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#steps-for-creating-a-custom-adapter">Steps for Creating a Custom Adapter</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#choose-the-interface-to-implement">1. Choose the Interface to Implement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-a-new-adapter-class">2. Create a New Adapter Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implement-required-methods">3. Implement Required Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-proper-documentation">4. Add Proper Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#example-custom-embedding-model-adapter">Example: Custom Embedding Model Adapter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-custom-vector-store-adapter">Example: Custom Vector Store Adapter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-custom-document-loader-adapter">Example: Custom Document Loader Adapter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices-for-adapter-development">Best Practices for Adapter Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-complete-custom-llm-adapter">Example: Complete Custom LLM Adapter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-custom-adapters">Testing Custom Adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contributing-your-adapter-to-ragflow">Contributing Your Adapter to RAGFlow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="performance_tuning.html">Performance Tuning</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Creating Custom Adapters</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/advanced/custom_adapters.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="creating-custom-adapters">
+<h1>Creating Custom Adapters<a class="headerlink" href="#creating-custom-adapters" title="Link to this heading"></a></h1>
+<p>This guide explains how to extend RAGFlow by implementing custom adapters for various components. The interface-driven architecture of RAGFlow makes it straightforward to add support for new vector stores, embedding models, LLMs, chunking strategies, or retrieval approaches.</p>
+<section id="understanding-ragflow-s-interface-architecture">
+<h2>Understanding RAGFlow’s Interface Architecture<a class="headerlink" href="#understanding-ragflow-s-interface-architecture" title="Link to this heading"></a></h2>
+<p>RAGFlow uses an interface-driven design pattern where each component type is defined by an abstract interface:</p>
+<ul class="simple">
+<li><p><strong>ChunkingStrategyInterface</strong>: For splitting documents into smaller chunks</p></li>
+<li><p><strong>EmbeddingModelInterface</strong>: For generating vector embeddings from text</p></li>
+<li><p><strong>VectorStoreInterface</strong>: For storing and retrieving vector embeddings</p></li>
+<li><p><strong>RetrievalStrategyInterface</strong>: For retrieving relevant documents from a vector store</p></li>
+<li><p><strong>LLMInterface</strong>: For generating text using large language models</p></li>
+</ul>
+<p>To add support for a new tool or service (like a new embedding model or vector database), you create an <em>adapter</em> that implements the appropriate interface. This adapter translates between RAGFlow’s standardized interface methods and the specific API of the tool you’re integrating.</p>
+</section>
+<section id="steps-for-creating-a-custom-adapter">
+<h2>Steps for Creating a Custom Adapter<a class="headerlink" href="#steps-for-creating-a-custom-adapter" title="Link to this heading"></a></h2>
+<section id="choose-the-interface-to-implement">
+<h3>1. Choose the Interface to Implement<a class="headerlink" href="#choose-the-interface-to-implement" title="Link to this heading"></a></h3>
+<p>First, determine which interface your adapter should implement:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ChunkingStrategyInterface</span><span class="p">,</span>
+    <span class="n">EmbeddingModelInterface</span><span class="p">,</span>
+    <span class="n">VectorStoreInterface</span><span class="p">,</span>
+    <span class="n">RetrievalStrategyInterface</span><span class="p">,</span>
+    <span class="n">LLMInterface</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-new-adapter-class">
+<h3>2. Create a New Adapter Class<a class="headerlink" href="#create-a-new-adapter-class" title="Link to this heading"></a></h3>
+<p>Create a new Python file in the appropriate subdirectory under <code class="docutils literal notranslate"><span class="pre">ragflow/adapters/</span></code>. Your class should inherit from the relevant interface.</p>
+</section>
+<section id="implement-required-methods">
+<h3>3. Implement Required Methods<a class="headerlink" href="#implement-required-methods" title="Link to this heading"></a></h3>
+<p>Implement all abstract methods defined in the interface. Refer to the interface docstrings for method signatures and expected behavior.</p>
+</section>
+<section id="add-proper-documentation">
+<h3>4. Add Proper Documentation<a class="headerlink" href="#add-proper-documentation" title="Link to this heading"></a></h3>
+<p>Add docstrings to your adapter class and methods, following the same style as the existing adapters.</p>
+</section>
+</section>
+<section id="example-custom-embedding-model-adapter">
+<h2>Example: Custom Embedding Model Adapter<a class="headerlink" href="#example-custom-embedding-model-adapter" title="Link to this heading"></a></h2>
+<p>Here’s an example of creating a custom adapter for a hypothetical embedding model:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Custom embedding model adapter for EmbeddingModelInterface.</span>
+
+<span class="sd">This module provides an implementation of EmbeddingModelInterface using</span>
+<span class="sd">a custom embedding model to generate embeddings.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="c1"># Import your embedding model library</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">custom_embeddings_library</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddingModelInterface</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomEmbeddingModelAdapter</span><span class="p">(</span><span class="n">EmbeddingModelInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adapter for a custom embedding model that implements the EmbeddingModelInterface.</span>
+
+<span class="sd">    This adapter uses [describe your embedding model/library] to generate embeddings</span>
+<span class="sd">    for queries and documents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default-model&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the custom embedding model adapter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_name: Name of the model to use</span>
+<span class="sd">            **kwargs: Additional arguments to pass to the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">custom_embeddings_library</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate an embedding for a query string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: The query text to embed</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of floats representing the embedding vector</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement the embedding logic specific to your model</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">embedding</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1"># Ensure the return value is a List[float]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate embeddings for a list of documents.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            documents: List of document texts to embed</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of embedding vectors, one for each input document</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement batch embedding logic</span>
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">encode_batch</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">embedding</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">embedding</span> <span class="ow">in</span> <span class="n">embeddings</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="example-custom-vector-store-adapter">
+<h2>Example: Custom Vector Store Adapter<a class="headerlink" href="#example-custom-vector-store-adapter" title="Link to this heading"></a></h2>
+<p>Here’s an example of a custom vector store adapter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Custom vector store adapter for VectorStoreInterface.</span>
+
+<span class="sd">This module provides an implementation of VectorStoreInterface using</span>
+<span class="sd">a custom vector database to store and retrieve embeddings.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="c1"># Import your vector database library</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">custom_vector_db</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorStoreInterface</span><span class="p">,</span> <span class="n">Document</span><span class="p">,</span> <span class="n">EmbeddingModelInterface</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomVectorStoreAdapter</span><span class="p">(</span><span class="n">VectorStoreInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adapter for a custom vector database that implements the VectorStoreInterface.</span>
+
+<span class="sd">    This adapter uses [describe your vector database] to store document embeddings</span>
+<span class="sd">    and perform similarity searches.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">collection_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ragflow&quot;</span><span class="p">,</span>
+        <span class="n">embedding_function</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EmbeddingModelInterface</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the custom vector store adapter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            collection_name: Name of the collection to use</span>
+<span class="sd">            embedding_function: Function to generate embeddings (if None, must be provided in add_texts)</span>
+<span class="sd">            **kwargs: Additional arguments to pass to the vector database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span> <span class="o">=</span> <span class="n">collection_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_function</span> <span class="o">=</span> <span class="n">embedding_function</span>
+
+        <span class="c1"># Initialize your vector database client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">custom_vector_db</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_or_create_collection</span><span class="p">(</span><span class="n">collection_name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add documents to the vector store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            documents: List of documents to add</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">documents</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">[</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_texts</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_texts</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add text strings with optional metadata to the vector store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            texts: List of text strings to add</span>
+<span class="sd">            metadata: Optional list of metadata dicts, one for each text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">texts</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Ensure we have an embedding function</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_function</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No embedding function provided&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Generate embeddings</span>
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_function</span><span class="o">.</span><span class="n">embed_documents</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+
+        <span class="c1"># Add to your vector database</span>
+        <span class="c1"># (Adjust this to match your database&#39;s API)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">embedding</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">)):</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">metadata</span> <span class="k">else</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;doc_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">embedding</span><span class="o">=</span><span class="n">embedding</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+                <span class="n">metadatas</span><span class="o">=</span><span class="n">metadata</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">similarity_search</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform a similarity search for a query string.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: Query string</span>
+<span class="sd">            k: Number of results to return</span>
+<span class="sd">            **kwargs: Additional search parameters</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of Documents most similar to the query</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ensure we have an embedding function</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_function</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No embedding function provided&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Generate embedding for the query</span>
+        <span class="n">query_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_function</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="c1"># Search the vector database</span>
+        <span class="c1"># (Adjust this to match your database&#39;s API)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+            <span class="n">embedding</span><span class="o">=</span><span class="n">query_embedding</span><span class="p">,</span>
+            <span class="n">limit</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Convert results to Documents</span>
+        <span class="n">documents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
+                <span class="n">page_content</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">],</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">documents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">documents</span>
+</pre></div>
+</div>
+</section>
+<section id="example-custom-document-loader-adapter">
+<h2>Example: Custom Document Loader Adapter<a class="headerlink" href="#example-custom-document-loader-adapter" title="Link to this heading"></a></h2>
+<p>Document loaders are utilities that help load content from various sources into the RAG pipeline. While they don’t directly implement one of the core interfaces, they follow a similar pattern:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Custom document loader for specialized file formats.</span>
+
+<span class="sd">This module provides a document loader for handling custom file formats</span>
+<span class="sd">not supported by the default loaders.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">specialized_parser</span>  <span class="c1"># Hypothetical parser for your file format</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">load_specialized_files</span><span class="p">(</span>
+    <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">recursive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">glob_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*.special&quot;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load documents from specialized file format.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        directory: Path to the directory containing the files</span>
+<span class="sd">        recursive: Whether to search subdirectories</span>
+<span class="sd">        glob_pattern: Pattern to match files</span>
+<span class="sd">        encoding: Text encoding to use</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of Document objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+
+    <span class="c1"># Find all matching files</span>
+    <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="n">glob_pattern</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">glob_pattern</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+
+    <span class="n">documents</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Use your specialized parser</span>
+            <span class="n">parsed_content</span> <span class="o">=</span> <span class="n">specialized_parser</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">)</span>
+
+            <span class="c1"># Extract content and metadata</span>
+            <span class="n">text_content</span> <span class="o">=</span> <span class="n">parsed_content</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">file_path</span><span class="p">,</span>
+                <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span>
+                <span class="s2">&quot;filetype&quot;</span><span class="p">:</span> <span class="s2">&quot;specialized&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="n">parsed_content</span><span class="o">.</span><span class="n">get_author</span><span class="p">(),</span>
+                <span class="s2">&quot;created_date&quot;</span><span class="p">:</span> <span class="n">parsed_content</span><span class="o">.</span><span class="n">get_created_date</span><span class="p">()</span>
+            <span class="p">}</span>
+
+            <span class="c1"># Create document</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="n">text_content</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+            <span class="n">documents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">documents</span>
+</pre></div>
+</div>
+</section>
+<section id="best-practices-for-adapter-development">
+<h2>Best Practices for Adapter Development<a class="headerlink" href="#best-practices-for-adapter-development" title="Link to this heading"></a></h2>
+<p>When creating custom adapters, follow these best practices to ensure they work well within the RAGFlow ecosystem:</p>
+<ol class="arabic">
+<li><p><strong>Thorough Docstrings</strong></p>
+<p>Write comprehensive docstrings that explain:
+- The purpose of the adapter
+- Required dependencies
+- All initialization parameters
+- Method parameters and return values
+- Usage examples</p>
+</li>
+<li><p><strong>Error Handling</strong></p>
+<p>Implement robust error handling:
+- Gracefully handle failures from the underlying library
+- Provide clear error messages that help users diagnose issues
+- Validate parameters early to prevent obscure errors later</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">embed_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate embedding for query.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">query</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Query must be a non-empty string&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">embedding</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error generating embedding: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Type Annotations</strong></p>
+<p>Use proper type annotations for all parameters and return values. This improves IDE support and helps catch errors early.</p>
+</li>
+<li><p><strong>Testing Strategy</strong></p>
+<p>Create thorough tests for your adapter:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">unittest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.your_module</span><span class="w"> </span><span class="kn">import</span> <span class="n">YourAdapter</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestYourAdapter</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tests for YourAdapter.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up test fixtures.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">YourAdapter</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_interface_compliance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test that all interface methods are properly implemented.&quot;&quot;&quot;</span>
+        <span class="c1"># Test method implementations</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_basic_functionality</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test basic adapter functionality.&quot;&quot;&quot;</span>
+        <span class="c1"># Test core functionality</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_error_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test adapter error handling.&quot;&quot;&quot;</span>
+        <span class="c1"># Test error scenarios</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Configuration Options</strong></p>
+<p>Provide sensible defaults but allow for configuration:
+- Make key parameters customizable
+- Document the impact of different configurations
+- When possible, use environment variables for sensitive information</p>
+</li>
+<li><p><strong>Performance Considerations</strong></p>
+<p>Optimize for performance where appropriate:
+- Implement batching for operations that support it
+- Consider caching results when appropriate
+- Document any performance characteristics users should be aware of</p>
+</li>
+<li><p><strong>Dependency Management</strong></p>
+<p>Clearly document and manage dependencies:
+- List all required packages in your documentation
+- Specify version requirements if needed
+- Consider making dependencies optional with helpful error messages</p>
+</li>
+</ol>
+</section>
+<section id="example-complete-custom-llm-adapter">
+<h2>Example: Complete Custom LLM Adapter<a class="headerlink" href="#example-complete-custom-llm-adapter" title="Link to this heading"></a></h2>
+<p>Here’s a more complete example of a custom LLM adapter with best practices implemented:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Adapter for the MyCustomLLM API.</span>
+
+<span class="sd">This module provides an implementation of LLMInterface for the</span>
+<span class="sd">MyCustomLLM API, enabling its use in RAGFlow pipelines.</span>
+
+<span class="sd">Requirements:</span>
+<span class="sd">    - mycustomllm-python package (&gt;= 1.2.0)</span>
+<span class="sd">    - API key set as MYCUSTOMLLM_API_KEY environment variable</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+
+<span class="c1"># Import the library (with error handling)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">mycustomllm</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+        <span class="s2">&quot;The mycustomllm-python package is required. &quot;</span>
+        <span class="s2">&quot;Install it with: pip install mycustomllm-python&gt;=1.2.0&quot;</span>
+    <span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMInterface</span><span class="p">,</span> <span class="n">Document</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyCustomLLMAdapter</span><span class="p">(</span><span class="n">LLMInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adapter for MyCustomLLM that implements the LLMInterface.</span>
+
+<span class="sd">    This adapter allows using MyCustomLLM as the language model in a RAG pipeline.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        ```python</span>
+<span class="sd">        from ragflow.adapters.llms.mycustomllm_adapter import MyCustomLLMAdapter</span>
+
+<span class="sd">        llm = MyCustomLLMAdapter(</span>
+<span class="sd">            api_key=&quot;your-api-key&quot;,</span>
+<span class="sd">            model=&quot;mycustomllm-large&quot;,</span>
+<span class="sd">            temperature=0.7</span>
+<span class="sd">        )</span>
+
+<span class="sd">        response = llm.generate(&quot;What is RAG?&quot;)</span>
+<span class="sd">        print(response)</span>
+<span class="sd">        ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">DEFAULT_MODEL</span> <span class="o">=</span> <span class="s2">&quot;mycustomllm-base&quot;</span>
+    <span class="n">DEFAULT_PROMPT_TEMPLATE</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    Answer the following question based on the provided context.</span>
+
+<span class="s2">    Context:</span>
+<span class="s2">    </span><span class="si">{context}</span>
+
+<span class="s2">    Question: </span><span class="si">{question}</span>
+
+<span class="s2">    Answer:</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_MODEL</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+        <span class="n">prompt_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_PROMPT_TEMPLATE</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the MyCustomLLM adapter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            api_key: API key for MyCustomLLM. If None, will try to use</span>
+<span class="sd">                the MYCUSTOMLLM_API_KEY environment variable.</span>
+<span class="sd">            model: Model name to use. Defaults to &quot;mycustomllm-base&quot;.</span>
+<span class="sd">            temperature: Temperature parameter controlling randomness.</span>
+<span class="sd">                Range from 0.0 to 1.0, where 0 is deterministic.</span>
+<span class="sd">            max_tokens: Maximum number of tokens to generate.</span>
+<span class="sd">            prompt_template: Template string for formatting context and questions.</span>
+<span class="sd">                Use {context} and {question} placeholders.</span>
+<span class="sd">            **kwargs: Additional parameters to pass to the model.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If no API key is provided and none is found in</span>
+<span class="sd">                the environment variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get API key from arguments or environment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MYCUSTOMLLM_API_KEY&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;No API key provided. Either pass an api_key parameter or &quot;</span>
+                <span class="s2">&quot;set the MYCUSTOMLLM_API_KEY environment variable.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Validate and store parameters</span>
+        <span class="k">if</span> <span class="n">temperature</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">temperature</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Temperature must be between 0.0 and 1.0&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_tokens</span> <span class="o">=</span> <span class="n">max_tokens</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additional_params</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+        <span class="c1"># Initialize client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">mycustomllm</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialized MyCustomLLMAdapter with model: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get and cache the model.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The loaded model instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate text based on a prompt.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prompt: The prompt string to generate text from</span>
+<span class="sd">            context: Optional additional context or parameters</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A string containing the generated text response</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: If an error occurs during generation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Get cached model</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model</span><span class="p">()</span>
+
+            <span class="c1"># Prepare parameters</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
+                <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_tokens</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_params</span>
+            <span class="p">}</span>
+
+            <span class="c1"># Update with any context parameters</span>
+            <span class="k">if</span> <span class="n">context</span><span class="p">:</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+            <span class="c1"># Generate response</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error generating text: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error generating text: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_with_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a response to a query using retrieved context documents.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: The user query or question to answer</span>
+<span class="sd">            context: A list of Document objects providing relevant context</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A string containing the generated response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Format context documents into a string</span>
+        <span class="n">context_text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Document </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Format the prompt using the template</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">context</span><span class="o">=</span><span class="n">context_text</span><span class="p">,</span>
+            <span class="n">question</span><span class="o">=</span><span class="n">query</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Generate response</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="testing-custom-adapters">
+<h2>Testing Custom Adapters<a class="headerlink" href="#testing-custom-adapters" title="Link to this heading"></a></h2>
+<p>Create a test file for your adapter in the appropriate test directory. Here’s an example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tests for the MyCustomLLMAdapter.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">unittest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">patch</span><span class="p">,</span> <span class="n">MagicMock</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.llms.mycustomllm_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyCustomLLMAdapter</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMyCustomLLMAdapter</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test suite for MyCustomLLMAdapter.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up test fixtures.&quot;&quot;&quot;</span>
+        <span class="c1"># Use a test API key for tests</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;test-api-key&quot;</span>
+        <span class="c1"># Create a patcher for the mycustomllm library</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client_patcher</span> <span class="o">=</span> <span class="n">patch</span><span class="p">(</span><span class="s2">&quot;mycustomllm.Client&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mock_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_patcher</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1"># Set up the mock client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mock_model</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mock_model</span><span class="o">.</span><span class="n">generate</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="s2">&quot;This is a test response.&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mock_client</span><span class="o">.</span><span class="n">return_value</span><span class="o">.</span><span class="n">get_model</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mock_model</span>
+
+        <span class="c1"># Create adapter with test configuration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span> <span class="o">=</span> <span class="n">MyCustomLLMAdapter</span><span class="p">(</span>
+            <span class="n">api_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="s2">&quot;test-model&quot;</span><span class="p">,</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="mf">0.5</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tear down test fixtures.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client_patcher</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init_with_api_key_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test initialization with API key parameter.&quot;&quot;&quot;</span>
+        <span class="n">adapter</span> <span class="o">=</span> <span class="n">MyCustomLLMAdapter</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">adapter</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mock_client</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_init_with_environment_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test initialization with environment variable.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;MYCUSTOMLLM_API_KEY&quot;</span><span class="p">:</span> <span class="s2">&quot;env-api-key&quot;</span><span class="p">}):</span>
+            <span class="n">adapter</span> <span class="o">=</span> <span class="n">MyCustomLLMAdapter</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">adapter</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span> <span class="s2">&quot;env-api-key&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test generate method.&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="s2">&quot;Test prompt&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="s2">&quot;This is a test response.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Verify the model was called with correct parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mock_model</span><span class="o">.</span><span class="n">generate</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span>
+            <span class="s2">&quot;Test prompt&quot;</span><span class="p">,</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">max_tokens</span><span class="o">=</span><span class="mi">500</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_generate_with_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test generate_with_context method.&quot;&quot;&quot;</span>
+        <span class="c1"># Create test documents</span>
+        <span class="n">documents</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;Document content 1&quot;</span><span class="p">),</span>
+            <span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="o">=</span><span class="s2">&quot;Document content 2&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Call method</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">generate_with_context</span><span class="p">(</span>
+            <span class="s2">&quot;Test question&quot;</span><span class="p">,</span>
+            <span class="n">documents</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Verify result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="s2">&quot;This is a test response.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Verify the expected prompt was generated</span>
+        <span class="n">expected_context</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;Document 1:</span><span class="se">\n</span><span class="s2">Document content 1</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Document 2:</span><span class="se">\n</span><span class="s2">Document content 2&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mock_model</span><span class="o">.</span><span class="n">generate</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+        <span class="n">call_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mock_model</span><span class="o">.</span><span class="n">generate</span><span class="o">.</span><span class="n">call_args</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">expected_context</span><span class="p">,</span> <span class="n">call_args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s2">&quot;Test question&quot;</span><span class="p">,</span> <span class="n">call_args</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_error_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test error handling.&quot;&quot;&quot;</span>
+        <span class="c1"># Make the mock model raise an exception</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mock_model</span><span class="o">.</span><span class="n">generate</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;API error&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Verify exception is properly propagated</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="s2">&quot;Test prompt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="contributing-your-adapter-to-ragflow">
+<h2>Contributing Your Adapter to RAGFlow<a class="headerlink" href="#contributing-your-adapter-to-ragflow" title="Link to this heading"></a></h2>
+<p>If you’ve developed a useful adapter that others might benefit from, consider contributing it to the RAGFlow project. Here’s how:</p>
+<ol class="arabic simple">
+<li><p>Ensure your code follows the project coding standards</p></li>
+<li><p>Add thorough documentation and tests</p></li>
+<li><p>Fork the RAGFlow repository and create a new branch for your adapter</p></li>
+<li><p>Create a pull request with a clear description of your adapter</p></li>
+<li><p>Respond to any feedback during the code review process</p></li>
+</ol>
+<p>Before contributing, please read the full <span class="xref std std-doc">../development/contributing</span> guide for more details.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api/utils.html" class="btn btn-neutral float-left" title="Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="performance_tuning.html" class="btn btn-neutral float-right" title="Performance Tuning" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

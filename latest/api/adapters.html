@@ -1,0 +1,667 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adapters &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Utilities" href="utils.html" />
+    <link rel="prev" title="Pipelines" href="pipelines.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/customization.html">Customizing RAGFlow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/document_loading.html">Document Loading Tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Adapters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#chunking-strategies">Chunking Strategies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter"><code class="docutils literal notranslate"><span class="pre">RecursiveCharacterTextSplitterAdapter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter.__init__"><code class="docutils literal notranslate"><span class="pre">RecursiveCharacterTextSplitterAdapter.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter.split_text"><code class="docutils literal notranslate"><span class="pre">RecursiveCharacterTextSplitterAdapter.split_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter.split_documents"><code class="docutils literal notranslate"><span class="pre">RecursiveCharacterTextSplitterAdapter.split_documents()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#embedding-models">Embedding Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter"><code class="docutils literal notranslate"><span class="pre">SentenceTransformersAdapter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.model_name"><code class="docutils literal notranslate"><span class="pre">SentenceTransformersAdapter.model_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.model"><code class="docutils literal notranslate"><span class="pre">SentenceTransformersAdapter.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.__init__"><code class="docutils literal notranslate"><span class="pre">SentenceTransformersAdapter.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.embed_documents"><code class="docutils literal notranslate"><span class="pre">SentenceTransformersAdapter.embed_documents()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.embed_query"><code class="docutils literal notranslate"><span class="pre">SentenceTransformersAdapter.embed_query()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#vector-stores">Vector Stores</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.__init__"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.add_documents"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.add_documents()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.add_texts"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.add_texts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.similarity_search"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.similarity_search()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.similarity_search_by_vector"><code class="docutils literal notranslate"><span class="pre">ChromaDBAdapter.similarity_search_by_vector()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#retrieval-strategies">Retrieval Strategies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever"><code class="docutils literal notranslate"><span class="pre">SimpleSimilarityRetriever</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.__init__"><code class="docutils literal notranslate"><span class="pre">SimpleSimilarityRetriever.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.retrieve"><code class="docutils literal notranslate"><span class="pre">SimpleSimilarityRetriever.retrieve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.get_relevant_documents"><code class="docutils literal notranslate"><span class="pre">SimpleSimilarityRetriever.get_relevant_documents()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.get_relevant_documents_with_scores"><code class="docutils literal notranslate"><span class="pre">SimpleSimilarityRetriever.get_relevant_documents_with_scores()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#llms">LLMs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ragflow.adapters.llms.gemini_adapter.GeminiAdapter"><code class="docutils literal notranslate"><span class="pre">GeminiAdapter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.llms.gemini_adapter.GeminiAdapter.__init__"><code class="docutils literal notranslate"><span class="pre">GeminiAdapter.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.llms.gemini_adapter.GeminiAdapter.generate"><code class="docutils literal notranslate"><span class="pre">GeminiAdapter.generate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ragflow.adapters.llms.gemini_adapter.GeminiAdapter.generate_with_context"><code class="docutils literal notranslate"><span class="pre">GeminiAdapter.generate_with_context()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-custom-adapters">Creating Custom Adapters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/custom_adapters.html">Creating Custom Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/performance_tuning.html">Performance Tuning</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Adapters</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/adapters.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="adapters">
+<h1>Adapters<a class="headerlink" href="#adapters" title="Link to this heading"></a></h1>
+<p>This page documents the adapter implementations for each component interface in RAGFlow. Each adapter implements one of the core interfaces defined in the <a class="reference internal" href="core.html"><span class="doc">Core Module</span></a> module.</p>
+<p>Adapters are the concrete implementations that connect RAGFlow to specific technologies and services. They allow the framework to be extended with new components without changing the core pipeline logic.</p>
+<section id="chunking-strategies">
+<h2>Chunking Strategies<a class="headerlink" href="#chunking-strategies" title="Link to this heading"></a></h2>
+<p>Chunking strategy adapters implement the <code class="docutils literal notranslate"><span class="pre">ChunkingStrategyInterface</span></code> and are responsible for splitting documents into smaller, manageable pieces.</p>
+<p id="module-ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter">Recursive character text splitter adapter for chunking documents.</p>
+<p>This module provides an adapter that implements the ChunkingStrategyInterface
+using Langchain’s RecursiveCharacterTextSplitter.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.</span></span><span class="sig-name descname"><span class="pre">RecursiveCharacterTextSplitterAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/chunking_strategies/recursive_character_splitter_adapter.html#RecursiveCharacterTextSplitterAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#ragflow.core.interfaces.ChunkingStrategyInterface" title="ragflow.core.interfaces.ChunkingStrategyInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChunkingStrategyInterface</span></code></a></p>
+<p>Adapter for RecursiveCharacterTextSplitter.</p>
+<p>This adapter uses Langchain’s RecursiveCharacterTextSplitter to implement
+the ChunkingStrategyInterface.</p>
+<p>This adapter uses RecursiveCharacterTextSplitter to split documents into
+smaller chunks based on specified chunk size and overlap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chunk_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>chunk_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+<li><p><strong>separators</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_overlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/chunking_strategies/recursive_character_splitter_adapter.html#RecursiveCharacterTextSplitterAdapter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the RecursiveCharacterTextSplitter adapter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chunk_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The target size of each text chunk (in characters)</p></li>
+<li><p><strong>chunk_overlap</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of characters of overlap between chunks</p></li>
+<li><p><strong>separators</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>] </em><em>| </em><em>None</em>) – List of separators to use for splitting, in order of priority.
+If None, defaults to [”nn”, “n”, “ “, “”]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter.split_text">
+<span class="sig-name descname"><span class="pre">split_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/chunking_strategies/recursive_character_splitter_adapter.html#RecursiveCharacterTextSplitterAdapter.split_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter.split_text" title="Link to this definition"></a></dt>
+<dd><p>Split a text string into smaller chunks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The text to split into chunks.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of text chunks.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter.split_documents">
+<span class="sig-name descname"><span class="pre">split_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">documents</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/chunking_strategies/recursive_character_splitter_adapter.html#RecursiveCharacterTextSplitterAdapter.split_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter.RecursiveCharacterTextSplitterAdapter.split_documents" title="Link to this definition"></a></dt>
+<dd><p>Split a list of documents into smaller chunks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>documents</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference internal" href="core.html#ragflow.core.interfaces.Document" title="ragflow.core.interfaces.Document"><em>Document</em></a><em>]</em>) – The documents to split into chunks.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of document chunks.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a>[<a class="reference internal" href="core.html#ragflow.core.interfaces.Document" title="ragflow.core.interfaces.Document"><em>Document</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="embedding-models">
+<h2>Embedding Models<a class="headerlink" href="#embedding-models" title="Link to this heading"></a></h2>
+<p>Embedding model adapters implement the <code class="docutils literal notranslate"><span class="pre">EmbeddingModelInterface</span></code> and convert text into vector representations that capture semantic meaning.</p>
+<p id="module-ragflow.adapters.embedding_models.sentence_transformers_adapter">Sentence Transformers adapter for generating embeddings.</p>
+<p>This module provides an adapter for using Sentence Transformers models
+to generate embeddings for documents and queries.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ragflow.adapters.embedding_models.sentence_transformers_adapter.</span></span><span class="sig-name descname"><span class="pre">SentenceTransformersAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all-MiniLM-L6-v2'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/embedding_models/sentence_transformers_adapter.html#SentenceTransformersAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#ragflow.core.interfaces.EmbeddingModelInterface" title="ragflow.core.interfaces.EmbeddingModelInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmbeddingModelInterface</span></code></a></p>
+<p>Adapter for Sentence Transformers embedding models.</p>
+<p>This adapter wraps SentenceTransformers models to implement the
+EmbeddingModelInterface, providing consistent embedding generation
+for documents and queries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><a class="headerlink" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.model_name" title="Link to this definition"></a></dt>
+<dd><p>Name of the SentenceTransformers model to use.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.model" title="Link to this definition"></a></dt>
+<dd><p>The loaded SentenceTransformers model instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all-MiniLM-L6-v2'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/embedding_models/sentence_transformers_adapter.html#SentenceTransformersAdapter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the SentenceTransformers adapter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the SentenceTransformers model to use.
+Defaults to “all-MiniLM-L6-v2”.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.embed_documents">
+<span class="sig-name descname"><span class="pre">embed_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">documents</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/embedding_models/sentence_transformers_adapter.html#SentenceTransformersAdapter.embed_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.embed_documents" title="Link to this definition"></a></dt>
+<dd><p>Generate embeddings for a list of documents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>documents</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – List of text strings to generate embeddings for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of embedding vectors.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If documents is empty.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.embed_query">
+<span class="sig-name descname"><span class="pre">embed_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/embedding_models/sentence_transformers_adapter.html#SentenceTransformersAdapter.embed_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.embedding_models.sentence_transformers_adapter.SentenceTransformersAdapter.embed_query" title="Link to this definition"></a></dt>
+<dd><p>Generate an embedding for a query string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The query text to embed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The embedding vector for the query.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If query is empty.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="vector-stores">
+<h2>Vector Stores<a class="headerlink" href="#vector-stores" title="Link to this heading"></a></h2>
+<p>Vector store adapters implement the <code class="docutils literal notranslate"><span class="pre">VectorStoreInterface</span></code> and provide storage and retrieval of vector embeddings.</p>
+<p id="module-ragflow.adapters.vector_stores.chromadb_adapter">ChromaDB adapter for VectorStoreInterface.</p>
+<p>This module provides an implementation of VectorStoreInterface using ChromaDB
+as the underlying vector store.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ragflow.adapters.vector_stores.chromadb_adapter.</span></span><span class="sig-name descname"><span class="pre">ChromaDBAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ragflow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persist_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/vector_stores/chromadb_adapter.html#ChromaDBAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#ragflow.core.interfaces.VectorStoreInterface" title="ragflow.core.interfaces.VectorStoreInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">VectorStoreInterface</span></code></a></p>
+<p>Adapter for ChromaDB that implements the VectorStoreInterface.</p>
+<p>This adapter uses ChromaDB to store and query vector embeddings. It supports
+both in-memory and persistent storage options.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
+<li><p><strong>persist_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ragflow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persist_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embedding_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/vector_stores/chromadb_adapter.html#ChromaDBAdapter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the ChromaDB adapter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collection_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the ChromaDB collection to use</p></li>
+<li><p><strong>persist_directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> | </em><em>None</em>) – Directory to persist the ChromaDB data. If None,
+uses in-memory storage</p></li>
+<li><p><strong>embedding_function</strong> – Function used to embed documents. If None,
+uses the embedding function from the collection</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.add_documents">
+<span class="sig-name descname"><span class="pre">add_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">documents</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/vector_stores/chromadb_adapter.html#ChromaDBAdapter.add_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.add_documents" title="Link to this definition"></a></dt>
+<dd><p>Add documents to the vector store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>documents</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference internal" href="core.html#ragflow.core.interfaces.Document" title="ragflow.core.interfaces.Document"><em>Document</em></a><em>]</em>) – List of documents to add</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.add_texts">
+<span class="sig-name descname"><span class="pre">add_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/vector_stores/chromadb_adapter.html#ChromaDBAdapter.add_texts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.add_texts" title="Link to this definition"></a></dt>
+<dd><p>Add text strings with optional metadata to the vector store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>texts</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – List of text strings to add</p></li>
+<li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><em>Dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><em>Any</em></a><em>]</em><em>] </em><em>| </em><em>None</em>) – Optional list of metadata dicts, one for each text</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.similarity_search">
+<span class="sig-name descname"><span class="pre">similarity_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/vector_stores/chromadb_adapter.html#ChromaDBAdapter.similarity_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.similarity_search" title="Link to this definition"></a></dt>
+<dd><p>Perform a similarity search using a query string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Query string</p></li>
+<li><p><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of results to return</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of documents most similar to the query</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a>[<a class="reference internal" href="core.html#ragflow.core.interfaces.Document" title="ragflow.core.interfaces.Document"><em>Document</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.similarity_search_by_vector">
+<span class="sig-name descname"><span class="pre">similarity_search_by_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/vector_stores/chromadb_adapter.html#ChromaDBAdapter.similarity_search_by_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.vector_stores.chromadb_adapter.ChromaDBAdapter.similarity_search_by_vector" title="Link to this definition"></a></dt>
+<dd><p>Perform a similarity search using a vector embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embedding</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Query embedding vector</p></li>
+<li><p><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of results to return</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of documents most similar to the query embedding</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a>[<a class="reference internal" href="core.html#ragflow.core.interfaces.Document" title="ragflow.core.interfaces.Document"><em>Document</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="retrieval-strategies">
+<h2>Retrieval Strategies<a class="headerlink" href="#retrieval-strategies" title="Link to this heading"></a></h2>
+<p>Retrieval strategy adapters implement the <code class="docutils literal notranslate"><span class="pre">RetrievalStrategyInterface</span></code> and are responsible for finding the most relevant documents for a query.</p>
+<p id="module-ragflow.adapters.retrieval_strategies.simple_similarity_retriever">Simple similarity-based retrieval strategy adapter.</p>
+<p>This module provides an adapter implementing the RetrievalStrategyInterface
+for simple similarity-based retrieval.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ragflow.adapters.retrieval_strategies.simple_similarity_retriever.</span></span><span class="sig-name descname"><span class="pre">SimpleSimilarityRetriever</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector_store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/retrieval_strategies/simple_similarity_retriever.html#SimpleSimilarityRetriever"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#ragflow.core.interfaces.RetrievalStrategyInterface" title="ragflow.core.interfaces.RetrievalStrategyInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">RetrievalStrategyInterface</span></code></a></p>
+<p>Simple similarity-based retrieval strategy.</p>
+<p>Adapter for a simple similarity-based retrieval strategy that implements
+the RetrievalStrategyInterface.</p>
+<p>This adapter uses a vector store to retrieve documents based on their
+similarity to the query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vector_store</strong> (<a class="reference internal" href="core.html#ragflow.core.interfaces.VectorStoreInterface" title="ragflow.core.interfaces.VectorStoreInterface"><em>VectorStoreInterface</em></a>)</p></li>
+<li><p><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector_store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/retrieval_strategies/simple_similarity_retriever.html#SimpleSimilarityRetriever.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the SimpleSimilarityRetriever.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vector_store</strong> (<a class="reference internal" href="core.html#ragflow.core.interfaces.VectorStoreInterface" title="ragflow.core.interfaces.VectorStoreInterface"><em>VectorStoreInterface</em></a>) – The vector store to retrieve documents from.</p></li>
+<li><p><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of documents to retrieve (default: 4).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.retrieve">
+<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector_store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/retrieval_strategies/simple_similarity_retriever.html#SimpleSimilarityRetriever.retrieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.retrieve" title="Link to this definition"></a></dt>
+<dd><p>Retrieve relevant documents from the vector store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The query to find relevant documents for.</p></li>
+<li><p><strong>vector_store</strong> (<a class="reference internal" href="core.html#ragflow.core.interfaces.VectorStoreInterface" title="ragflow.core.interfaces.VectorStoreInterface"><em>VectorStoreInterface</em></a>) – The vector store to retrieve documents from.
+If provided, this overrides the vector_store set in the constructor.</p></li>
+<li><p><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of documents to retrieve.
+If provided, this overrides the k value set in the constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of retrieved documents.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><em>Dict</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><em>Any</em></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.get_relevant_documents">
+<span class="sig-name descname"><span class="pre">get_relevant_documents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/retrieval_strategies/simple_similarity_retriever.html#SimpleSimilarityRetriever.get_relevant_documents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.get_relevant_documents" title="Link to this definition"></a></dt>
+<dd><p>Retrieve documents relevant to the query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Query string</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of relevant documents</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><em>Dict</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><em>Any</em></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.get_relevant_documents_with_scores">
+<span class="sig-name descname"><span class="pre">get_relevant_documents_with_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/retrieval_strategies/simple_similarity_retriever.html#SimpleSimilarityRetriever.get_relevant_documents_with_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.get_relevant_documents_with_scores" title="Link to this definition"></a></dt>
+<dd><p>Retrieve documents relevant to the query with relevance scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Query string</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of tuples containing (document, score)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><em>Dict</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><em>Any</em></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="llms">
+<h2>LLMs<a class="headerlink" href="#llms" title="Link to this heading"></a></h2>
+<p>LLM adapters implement the <code class="docutils literal notranslate"><span class="pre">LLMInterface</span></code> and generate responses based on queries and retrieved context.</p>
+<p id="module-ragflow.adapters.llms.gemini_adapter">Gemini adapter for LLMInterface.</p>
+<p>This module provides an implementation of LLMInterface using Google’s Gemini
+API to generate text.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ragflow.adapters.llms.gemini_adapter.GeminiAdapter">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ragflow.adapters.llms.gemini_adapter.</span></span><span class="sig-name descname"><span class="pre">GeminiAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gemini-2.0-flash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/llms/gemini_adapter.html#GeminiAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.llms.gemini_adapter.GeminiAdapter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#ragflow.core.interfaces.LLMInterface" title="ragflow.core.interfaces.LLMInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLMInterface</span></code></a></p>
+<p>Adapter for Google’s Gemini API that implements the LLMInterface.</p>
+<p>This adapter uses the Gemini API to generate text responses based on
+prompts and context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
+<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>max_tokens</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>top_p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>)</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.llms.gemini_adapter.GeminiAdapter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gemini-2.0-flash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/llms/gemini_adapter.html#GeminiAdapter.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.llms.gemini_adapter.GeminiAdapter.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the Gemini adapter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Google API key for Gemini</p></li>
+<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of the Gemini model to use (default: “gemini-2.0-flash”)</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Controls randomness in generation (0.0 to 1.0)</p></li>
+<li><p><strong>max_tokens</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> | </em><em>None</em>) – Maximum number of tokens to generate (optional)</p></li>
+<li><p><strong>top_p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Nucleus sampling parameter (0.0 to 1.0)</p></li>
+<li><p><strong>top_k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Top-k sampling parameter</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.llms.gemini_adapter.GeminiAdapter.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/llms/gemini_adapter.html#GeminiAdapter.generate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.llms.gemini_adapter.GeminiAdapter.generate" title="Link to this definition"></a></dt>
+<dd><p>Generate text based on a prompt string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prompt</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Input prompt string</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated text</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ragflow.adapters.llms.gemini_adapter.GeminiAdapter.generate_with_context">
+<span class="sig-name descname"><span class="pre">generate_with_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ragflow/adapters/llms/gemini_adapter.html#GeminiAdapter.generate_with_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ragflow.adapters.llms.gemini_adapter.GeminiAdapter.generate_with_context" title="Link to this definition"></a></dt>
+<dd><p>Generate text based on a query and context documents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – User query</p></li>
+<li><p><strong>context</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><em>List</em></a><em>[</em><a class="reference internal" href="core.html#ragflow.core.interfaces.Document" title="ragflow.core.interfaces.Document"><em>Document</em></a><em>]</em>) – List of context documents</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated text that answers the query using the provided context</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="creating-custom-adapters">
+<h2>Creating Custom Adapters<a class="headerlink" href="#creating-custom-adapters" title="Link to this heading"></a></h2>
+<p>For detailed instructions on how to create your own adapters to extend RAGFlow’s capabilities, see the <a class="reference internal" href="../advanced/custom_adapters.html"><span class="doc">Creating Custom Adapters</span></a> guide.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddingModelInterface</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyCustomEmbeddingModel</span><span class="p">(</span><span class="n">EmbeddingModelInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A custom implementation of the EmbeddingModelInterface.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;my-custom-model&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="c1"># Initialize your custom embedding model</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="c1"># Implement query embedding logic</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+        <span class="c1"># Implement document embedding logic</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pipelines.html" class="btn btn-neutral float-left" title="Pipelines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="utils.html" class="btn btn-neutral float-right" title="Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

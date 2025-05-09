@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customizing RAGFlow &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Basic RAG Tutorial" href="../tutorials/basic_rag.html" />
+    <link rel="prev" title="Concepts" href="../concepts.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Customizing RAGFlow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#customizing-the-default-pipeline">Customizing the Default Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#component-specific-customization">Component-Specific Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-custom-pipelines">Building Custom Pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-independent-components">Using Independent Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-profiles">Configuration Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extending-with-custom-adapters">Extending with Custom Adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/document_loading.html">Document Loading Tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/adapters.html">Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/custom_adapters.html">Creating Custom Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/performance_tuning.html">Performance Tuning</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Customizing RAGFlow</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/user_guide/customization.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="customizing-ragflow">
+<h1>Customizing RAGFlow<a class="headerlink" href="#customizing-ragflow" title="Link to this heading"></a></h1>
+<p>RAGFlow is designed to be highly customizable to meet diverse requirements. This guide explains the different approaches to customization, from simple parameter adjustments to building entirely custom pipelines.</p>
+<section id="customizing-the-default-pipeline">
+<h2>Customizing the Default Pipeline<a class="headerlink" href="#customizing-the-default-pipeline" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">DefaultRAGPipeline</span></code> class is designed to be easily customizable through its constructor parameters. You can adjust settings for all components without having to instantiate them individually.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.pipelines.default_rag_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRAGPipeline</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="c1"># Vector store configuration</span>
+    <span class="n">persist_directory</span><span class="o">=</span><span class="s2">&quot;./my_db&quot;</span><span class="p">,</span>
+    <span class="n">collection_name</span><span class="o">=</span><span class="s2">&quot;my_collection&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Embedding model configuration</span>
+    <span class="n">embedding_model_name</span><span class="o">=</span><span class="s2">&quot;all-MiniLM-L6-v2&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Chunking configuration</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+
+    <span class="c1"># Retrieval configuration</span>
+    <span class="n">retrieval_k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+
+    <span class="c1"># LLM configuration</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;gemini-pro&quot;</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">200</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="component-specific-customization">
+<h2>Component-Specific Customization<a class="headerlink" href="#component-specific-customization" title="Link to this heading"></a></h2>
+<p>For more advanced customization, the <code class="docutils literal notranslate"><span class="pre">DefaultRAGPipeline</span></code> accepts component-specific keyword arguments that are passed directly to the underlying adapters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Pass custom parameters to specific components</span>
+    <span class="n">chunker_kwargs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;separators&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">,</span> <span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+    <span class="p">},</span>
+
+    <span class="n">embedder_kwargs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;device&quot;</span><span class="p">:</span> <span class="s2">&quot;cpu&quot;</span>  <span class="c1"># SentenceTransformers-specific parameter</span>
+    <span class="p">},</span>
+
+    <span class="n">vector_store_kwargs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;anonymized_telemetry&quot;</span><span class="p">:</span> <span class="kc">False</span>  <span class="c1"># ChromaDB-specific parameter</span>
+    <span class="p">},</span>
+
+    <span class="n">retriever_kwargs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;search_type&quot;</span><span class="p">:</span> <span class="s2">&quot;similarity&quot;</span>  <span class="c1"># Retriever-specific parameter</span>
+    <span class="p">},</span>
+
+    <span class="n">llm_kwargs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;safety_settings&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;HARM_CATEGORY_DANGEROUS&quot;</span><span class="p">,</span> <span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="s2">&quot;BLOCK_MEDIUM_AND_ABOVE&quot;</span><span class="p">}</span>
+        <span class="p">]</span>  <span class="c1"># Gemini-specific parameter</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="building-custom-pipelines">
+<h2>Building Custom Pipelines<a class="headerlink" href="#building-custom-pipelines" title="Link to this heading"></a></h2>
+<p>For maximum flexibility, you can instantiate each adapter separately and combine them into a custom pipeline:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">RAGPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.chunking_strategies.recursive_character_splitter_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitterAdapter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.embedding_models.sentence_transformers_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformersAdapter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.vector_stores.chromadb_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChromaDBAdapter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.retrieval_strategies.simple_similarity_retriever</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleSimilarityRetriever</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.llms.gemini_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeminiAdapter</span>
+
+<span class="c1"># Create custom components</span>
+<span class="n">chunker</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitterAdapter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">separators</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">,</span> <span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">embedder</span> <span class="o">=</span> <span class="n">SentenceTransformersAdapter</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;paraphrase-multilingual-MiniLM-L12-v2&quot;</span>
+<span class="p">)</span>
+
+<span class="n">vector_store</span> <span class="o">=</span> <span class="n">ChromaDBAdapter</span><span class="p">(</span>
+    <span class="n">collection_name</span><span class="o">=</span><span class="s2">&quot;custom_collection&quot;</span><span class="p">,</span>
+    <span class="n">persist_directory</span><span class="o">=</span><span class="s2">&quot;./custom_db&quot;</span><span class="p">,</span>
+    <span class="n">embedding_function</span><span class="o">=</span><span class="n">embedder</span>
+<span class="p">)</span>
+
+<span class="n">retriever</span> <span class="o">=</span> <span class="n">SimpleSimilarityRetriever</span><span class="p">(</span>
+    <span class="n">vector_store</span><span class="o">=</span><span class="n">vector_store</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">3</span>
+<span class="p">)</span>
+
+<span class="n">llm</span> <span class="o">=</span> <span class="n">GeminiAdapter</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;gemini-pro&quot;</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">100</span>
+<span class="p">)</span>
+
+<span class="c1"># Assemble the custom pipeline</span>
+<span class="n">custom_pipeline</span> <span class="o">=</span> <span class="n">RAGPipeline</span><span class="p">(</span>
+    <span class="n">chunking_strategy</span><span class="o">=</span><span class="n">chunker</span><span class="p">,</span>
+    <span class="n">embedding_model</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span>
+    <span class="n">vector_store</span><span class="o">=</span><span class="n">vector_store</span><span class="p">,</span>
+    <span class="n">retrieval_strategy</span><span class="o">=</span><span class="n">retriever</span><span class="p">,</span>
+    <span class="n">llm</span><span class="o">=</span><span class="n">llm</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="using-independent-components">
+<h2>Using Independent Components<a class="headerlink" href="#using-independent-components" title="Link to this heading"></a></h2>
+<p>Each adapter can also be used independently outside of a pipeline:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use the chunker directly</span>
+<span class="n">chunker</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitterAdapter</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">chunker</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="s2">&quot;This is a long document that needs to be split into chunks.&quot;</span><span class="p">)</span>
+
+<span class="c1"># Use the embedding model directly</span>
+<span class="n">embedder</span> <span class="o">=</span> <span class="n">SentenceTransformersAdapter</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;all-MiniLM-L6-v2&quot;</span><span class="p">)</span>
+<span class="n">embedding</span> <span class="o">=</span> <span class="n">embedder</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="s2">&quot;What is RAG?&quot;</span><span class="p">)</span>
+
+<span class="c1"># Use the LLM directly</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">GeminiAdapter</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="s2">&quot;Explain what vector embeddings are.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="configuration-profiles">
+<h2>Configuration Profiles<a class="headerlink" href="#configuration-profiles" title="Link to this heading"></a></h2>
+<p>For reusable configurations, you can create configuration profiles:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config_profiles</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;low_resource&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;persist_directory&quot;</span><span class="p">:</span> <span class="s2">&quot;./low_resource_db&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;embedding_model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;all-MiniLM-L6-v2&quot;</span><span class="p">,</span>  <span class="c1"># Small, fast model</span>
+        <span class="s2">&quot;chunk_size&quot;</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span>  <span class="c1"># Larger chunks, fewer embeddings</span>
+        <span class="s2">&quot;retrieval_k&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1"># Retrieve fewer documents</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
+        <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>  <span class="c1"># Shorter responses</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;high_accuracy&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;persist_directory&quot;</span><span class="p">:</span> <span class="s2">&quot;./high_accuracy_db&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;embedding_model_name&quot;</span><span class="p">:</span> <span class="s2">&quot;all-mpnet-base-v2&quot;</span><span class="p">,</span>  <span class="c1"># More accurate model</span>
+        <span class="s2">&quot;chunk_size&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>  <span class="c1"># Smaller chunks for precise retrieval</span>
+        <span class="s2">&quot;retrieval_k&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>  <span class="c1"># Retrieve more context</span>
+        <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>  <span class="c1"># Lower temperature for factual responses</span>
+        <span class="s2">&quot;max_tokens&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>  <span class="c1"># Longer responses</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Create a pipeline from a profile</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_pipeline_from_profile</span><span class="p">(</span><span class="n">profile_name</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">profile_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_profiles</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Profile &#39;</span><span class="si">{</span><span class="n">profile_name</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">config_profiles</span><span class="p">[</span><span class="n">profile_name</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;api_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">api_key</span>
+
+    <span class="k">return</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Usage</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">create_pipeline_from_profile</span><span class="p">(</span><span class="s2">&quot;high_accuracy&quot;</span><span class="p">,</span> <span class="s2">&quot;your-api-key&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="extending-with-custom-adapters">
+<h2>Extending with Custom Adapters<a class="headerlink" href="#extending-with-custom-adapters" title="Link to this heading"></a></h2>
+<p>For advanced use cases, you can create your own adapters by implementing the core interfaces of RAGFlow. This allows you to integrate new vector stores, embedding models, LLMs, chunking strategies, or retrieval approaches not included in the default implementation.</p>
+<p>See the <a class="reference internal" href="../advanced/custom_adapters.html"><span class="doc">Creating Custom Adapters</span></a> guide for detailed instructions and examples for implementing your own adapters.</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<p>For complete working examples of these customization approaches, see:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ragflow/examples/customization_examples.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ragflow/examples/configuration_examples.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ragflow/examples/custom_adapters_example.py</span></code></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../concepts.html" class="btn btn-neutral float-left" title="Concepts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorials/basic_rag.html" class="btn btn-neutral float-right" title="Basic RAG Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

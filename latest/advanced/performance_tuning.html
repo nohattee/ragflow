@@ -1,0 +1,813 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Performance Tuning &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Creating Custom Adapters" href="custom_adapters.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">Concepts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/customization.html">Customizing RAGFlow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/document_loading.html">Document Loading Tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/adapters.html">Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_adapters.html">Creating Custom Adapters</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Performance Tuning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#optimizing-document-chunking">Optimizing Document Chunking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#chunk-size-selection">Chunk Size Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-chunking-strategies">Custom Chunking Strategies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#optimizing-embedding-models">Optimizing Embedding Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model-selection-trade-offs">Model Selection Trade-offs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#batching-for-performance">Batching for Performance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#optimizing-vector-stores">Optimizing Vector Stores</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#choosing-the-right-vector-store">Choosing the Right Vector Store</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#index-parameters-and-ann-settings">Index Parameters and ANN Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#optimizing-retrieval-strategies">Optimizing Retrieval Strategies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tuning-retrieval-parameters">Tuning Retrieval Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implementing-advanced-retrieval-strategies">Implementing Advanced Retrieval Strategies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#optimizing-llm-generation">Optimizing LLM Generation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#temperature-and-sampling-parameters">Temperature and Sampling Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#maximum-token-management">Maximum Token Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prompt-engineering">Prompt Engineering</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#system-level-optimizations">System-Level Optimizations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#caching-strategies">Caching Strategies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#asynchronous-processing">Asynchronous Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#monitoring-and-observability">Monitoring and Observability</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#comprehensive-rag-system-performance-checklist">Comprehensive RAG System Performance Checklist</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Performance Tuning</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/advanced/performance_tuning.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="performance-tuning">
+<h1>Performance Tuning<a class="headerlink" href="#performance-tuning" title="Link to this heading"></a></h1>
+<p>This guide provides detailed strategies and techniques for optimizing the performance of RAG systems built with RAGFlow. Performance in RAG systems can be measured in terms of:</p>
+<ol class="arabic simple">
+<li><p><strong>Retrieval Quality</strong>: How well the system finds relevant documents</p></li>
+<li><p><strong>Generation Quality</strong>: How accurately and coherently the system answers questions</p></li>
+<li><p><strong>Latency</strong>: How quickly the system responds to queries</p></li>
+<li><p><strong>Throughput</strong>: How many queries the system can handle simultaneously</p></li>
+<li><p><strong>Resource Usage</strong>: How efficiently the system uses memory, CPU, and storage</p></li>
+</ol>
+<p>We’ll explore ways to optimize each component of your RAG pipeline to achieve the best balance of these performance aspects for your specific use case.</p>
+<section id="optimizing-document-chunking">
+<h2>Optimizing Document Chunking<a class="headerlink" href="#optimizing-document-chunking" title="Link to this heading"></a></h2>
+<p>Chunking directly impacts both retrieval quality and resource efficiency. The right chunking strategy can make or break your RAG system’s performance.</p>
+<section id="chunk-size-selection">
+<h3>Chunk Size Selection<a class="headerlink" href="#chunk-size-selection" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.chunking_strategies</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitterAdapter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.pipelines.default_rag_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRAGPipeline</span>
+
+<span class="c1"># Smaller chunks for more granular retrieval</span>
+<span class="n">small_chunk_pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="c1"># Other parameters...</span>
+<span class="p">)</span>
+
+<span class="c1"># Medium chunks for balance (often the sweet spot)</span>
+<span class="n">medium_chunk_pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+    <span class="c1"># Other parameters...</span>
+<span class="p">)</span>
+
+<span class="c1"># Larger chunks for more context per chunk</span>
+<span class="n">large_chunk_pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">1500</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span>
+    <span class="c1"># Other parameters...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Best Practices for Chunk Size:</strong></p>
+<ul class="simple">
+<li><p><strong>Start with 500-1000 characters</strong> as a baseline chunk size</p></li>
+<li><p>For <strong>short, factual content</strong> (e.g., product descriptions), use <strong>smaller chunks</strong> (200-500 chars)</p></li>
+<li><p>For <strong>narrative or contextual content</strong> (e.g., articles, documentation), use <strong>larger chunks</strong> (800-1500 chars)</p></li>
+<li><p>Always include <strong>chunk overlap</strong> (typically 10-20% of chunk size) to maintain context across chunk boundaries</p></li>
+</ul>
+</section>
+<section id="custom-chunking-strategies">
+<h3>Custom Chunking Strategies<a class="headerlink" href="#custom-chunking-strategies" title="Link to this heading"></a></h3>
+<p>For more specialized needs, implement a custom chunking strategy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChunkingStrategyInterface</span><span class="p">,</span> <span class="n">Document</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SectionBasedChunker</span><span class="p">(</span><span class="n">ChunkingStrategyInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split documents based on section headers (e.g., Markdown headers).&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">default_separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span> <span class="o">=</span> <span class="n">min_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_separator</span> <span class="o">=</span> <span class="n">default_separator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">section_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^#{1,6}\s+(.+?)$&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">split_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="c1"># Find all section headers</span>
+        <span class="n">sections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">last_pos</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">section_pattern</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">-</span> <span class="n">last_pos</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span><span class="p">:</span>
+                <span class="c1"># Add text since last section header as a chunk</span>
+                <span class="n">sections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">last_pos</span><span class="p">:</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">last_pos</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="c1"># Add final section</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">last_pos</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span><span class="p">:</span>
+            <span class="n">sections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">last_pos</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">sections</span> <span class="k">if</span> <span class="n">sections</span> <span class="k">else</span> <span class="p">[</span><span class="n">text</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">split_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">]:</span>
+        <span class="n">chunked_docs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">:</span>
+            <span class="n">chunks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chunks</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>  <span class="c1"># Skip empty chunks</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Copy metadata and add chunk info</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;chunk&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+                <span class="n">chunked_docs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Document</span><span class="p">(</span>
+                    <span class="n">page_content</span><span class="o">=</span><span class="n">chunk</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span>
+                <span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">chunked_docs</span>
+</pre></div>
+</div>
+<p>Use this custom chunker in your pipeline:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">RAGPipeline</span>
+
+<span class="c1"># Create other components</span>
+<span class="c1"># ...</span>
+
+<span class="c1"># Use custom chunker</span>
+<span class="n">section_chunker</span> <span class="o">=</span> <span class="n">SectionBasedChunker</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">RAGPipeline</span><span class="p">(</span>
+    <span class="n">chunking_strategy</span><span class="o">=</span><span class="n">section_chunker</span><span class="p">,</span>
+    <span class="n">embedding_model</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span>
+    <span class="n">vector_store</span><span class="o">=</span><span class="n">vector_store</span><span class="p">,</span>
+    <span class="n">retrieval_strategy</span><span class="o">=</span><span class="n">retriever</span><span class="p">,</span>
+    <span class="n">llm</span><span class="o">=</span><span class="n">llm</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="optimizing-embedding-models">
+<h2>Optimizing Embedding Models<a class="headerlink" href="#optimizing-embedding-models" title="Link to this heading"></a></h2>
+<p>The embedding model affects retrieval quality, latency, and resource usage.</p>
+<section id="model-selection-trade-offs">
+<h3>Model Selection Trade-offs<a class="headerlink" href="#model-selection-trade-offs" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.embedding_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformersAdapter</span>
+
+<span class="c1"># Lightweight, fast model (384 dimensions) - good for quick testing or small datasets</span>
+<span class="n">fast_embedder</span> <span class="o">=</span> <span class="n">SentenceTransformersAdapter</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;all-MiniLM-L6-v2&quot;</span><span class="p">)</span>
+
+<span class="c1"># Balanced model (768 dimensions) - good balance of quality and performance</span>
+<span class="n">balanced_embedder</span> <span class="o">=</span> <span class="n">SentenceTransformersAdapter</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;all-mpnet-base-v2&quot;</span><span class="p">)</span>
+
+<span class="c1"># High accuracy model (768+ dimensions) - best quality but slower and more resource-intensive</span>
+<span class="n">accurate_embedder</span> <span class="o">=</span> <span class="n">SentenceTransformersAdapter</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;text-embedding-ada-002&quot;</span><span class="p">)</span>  <span class="c1"># OpenAI</span>
+</pre></div>
+</div>
+<p><strong>Benchmark different models</strong> on your specific data and queries:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.pipelines.default_rag_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRAGPipeline</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">benchmark_embedding_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">test_queries</span><span class="p">):</span>
+    <span class="c1"># Initialize pipeline with specific embedding model</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+        <span class="n">embedding_model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="c1"># Other parameters...</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Add same test documents to each pipeline</span>
+    <span class="n">pipeline</span><span class="o">.</span><span class="n">add_texts</span><span class="p">(</span><span class="n">test_documents</span><span class="p">)</span>
+
+    <span class="c1"># Measure query time</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">test_queries</span><span class="p">]</span>
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">model_name</span><span class="p">,</span>
+        <span class="s2">&quot;avg_query_time&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_queries</span><span class="p">),</span>
+        <span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">results</span>
+    <span class="p">}</span>
+
+<span class="c1"># Test different models</span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;all-MiniLM-L6-v2&quot;</span><span class="p">,</span> <span class="s2">&quot;all-mpnet-base-v2&quot;</span><span class="p">,</span> <span class="s2">&quot;paraphrase-multilingual-mpnet-base-v2&quot;</span><span class="p">]</span>
+<span class="n">test_queries</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;What is RAG?&quot;</span><span class="p">,</span> <span class="s2">&quot;How do embeddings work?&quot;</span><span class="p">,</span> <span class="s2">&quot;Explain chunking strategies&quot;</span><span class="p">]</span>
+
+<span class="n">benchmarks</span> <span class="o">=</span> <span class="p">[</span><span class="n">benchmark_embedding_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">test_queries</span><span class="p">)</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
+
+<span class="c1"># Compare results</span>
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">benchmarks</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model: </span><span class="si">{</span><span class="n">b</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, Avg Query Time: </span><span class="si">{</span><span class="n">b</span><span class="p">[</span><span class="s1">&#39;avg_query_time&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="batching-for-performance">
+<h3>Batching for Performance<a class="headerlink" href="#batching-for-performance" title="Link to this heading"></a></h3>
+<p>When embedding large document sets, use batching:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">add_documents_in_batches</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">documents</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add documents to pipeline in batches for better performance.&quot;&quot;&quot;</span>
+    <span class="n">total_batches</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span> <span class="o">+</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">batch_size</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">documents</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">),</span> <span class="n">total</span><span class="o">=</span><span class="n">total_batches</span><span class="p">):</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">documents</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
+        <span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="c1"># Optional: add a small delay to avoid overwhelming the system</span>
+        <span class="c1"># time.sleep(0.1)</span>
+
+<span class="c1"># Load a large document set</span>
+<span class="n">all_documents</span> <span class="o">=</span> <span class="n">load_text_files</span><span class="p">(</span><span class="s2">&quot;./data&quot;</span><span class="p">)</span>
+
+<span class="c1"># Add in batches</span>
+<span class="n">add_documents_in_batches</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">all_documents</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="optimizing-vector-stores">
+<h2>Optimizing Vector Stores<a class="headerlink" href="#optimizing-vector-stores" title="Link to this heading"></a></h2>
+<p>The vector store impacts retrieval quality, speed, and scalability.</p>
+<section id="choosing-the-right-vector-store">
+<h3>Choosing the Right Vector Store<a class="headerlink" href="#choosing-the-right-vector-store" title="Link to this heading"></a></h3>
+<p>RAGFlow supports different vector stores through adapters. Each has different performance characteristics:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.vector_stores</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChromaDBAdapter</span><span class="p">,</span> <span class="n">FaissAdapter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.embedding_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SentenceTransformersAdapter</span>
+
+<span class="c1"># Create embedding model</span>
+<span class="n">embedder</span> <span class="o">=</span> <span class="n">SentenceTransformersAdapter</span><span class="p">()</span>
+
+<span class="c1"># ChromaDB - good for persistence and metadata filtering</span>
+<span class="n">chroma_store</span> <span class="o">=</span> <span class="n">ChromaDBAdapter</span><span class="p">(</span>
+    <span class="n">collection_name</span><span class="o">=</span><span class="s2">&quot;my_documents&quot;</span><span class="p">,</span>
+    <span class="n">persist_directory</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+    <span class="n">embedding_function</span><span class="o">=</span><span class="n">embedder</span>
+<span class="p">)</span>
+
+<span class="c1"># FAISS - excellent for fast similarity search on larger datasets</span>
+<span class="n">faiss_store</span> <span class="o">=</span> <span class="n">FaissAdapter</span><span class="p">(</span>
+    <span class="n">embedding_function</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span>
+    <span class="n">index_type</span><span class="o">=</span><span class="s2">&quot;Flat&quot;</span>  <span class="c1"># Can be &quot;Flat&quot; (exact) or &quot;IVF&quot; (approximate) or &quot;HNSW&quot; (hierarchical)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Vector Store Selection Guidelines:</strong></p>
+<ul class="simple">
+<li><p>For <strong>small to medium datasets</strong> (&lt; 100k chunks), <strong>ChromaDB</strong> is a good default choice</p></li>
+<li><p>For <strong>large datasets</strong> (100k+ chunks), consider <strong>FAISS</strong> with approximate nearest neighbor algorithms</p></li>
+<li><p>For <strong>heavy filtering on metadata</strong>, prefer <strong>ChromaDB</strong> or <strong>Weaviate</strong></p></li>
+<li><p>For <strong>production deployments</strong>, consider managed options like <strong>Pinecone</strong> or <strong>Qdrant</strong></p></li>
+</ul>
+</section>
+<section id="index-parameters-and-ann-settings">
+<h3>Index Parameters and ANN Settings<a class="headerlink" href="#index-parameters-and-ann-settings" title="Link to this heading"></a></h3>
+<p>For large-scale vector stores, tune ANN (Approximate Nearest Neighbor) parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># FAISS with IVF (Inverted File) for better scaling</span>
+<span class="c1"># The nlist parameter controls the number of centroids (partitions)</span>
+<span class="c1"># Higher values = more partitions = faster search but potentially lower accuracy</span>
+<span class="n">faiss_ivf_store</span> <span class="o">=</span> <span class="n">FaissAdapter</span><span class="p">(</span>
+    <span class="n">embedding_function</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span>
+    <span class="n">index_type</span><span class="o">=</span><span class="s2">&quot;IVF&quot;</span><span class="p">,</span>
+    <span class="n">nlist</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>  <span class="c1"># Number of partitions (rule of thumb: sqrt(n) where n is total vectors)</span>
+    <span class="n">nprobe</span><span class="o">=</span><span class="mi">10</span>   <span class="c1"># Number of partitions to search (higher = more accurate but slower)</span>
+<span class="p">)</span>
+
+<span class="c1"># FAISS with HNSW (Hierarchical Navigable Small World)</span>
+<span class="c1"># Good for high-dimensional vectors</span>
+<span class="n">faiss_hnsw_store</span> <span class="o">=</span> <span class="n">FaissAdapter</span><span class="p">(</span>
+    <span class="n">embedding_function</span><span class="o">=</span><span class="n">embedder</span><span class="p">,</span>
+    <span class="n">index_type</span><span class="o">=</span><span class="s2">&quot;HNSW&quot;</span><span class="p">,</span>
+    <span class="n">M</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>       <span class="c1"># Number of connections per layer (higher = more accurate but more memory)</span>
+    <span class="n">ef_construction</span><span class="o">=</span><span class="mi">200</span>  <span class="c1"># Search depth during construction (higher = more accurate but slower build)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="optimizing-retrieval-strategies">
+<h2>Optimizing Retrieval Strategies<a class="headerlink" href="#optimizing-retrieval-strategies" title="Link to this heading"></a></h2>
+<p>The retrieval strategy affects both quality and speed of retrievals.</p>
+<section id="tuning-retrieval-parameters">
+<h3>Tuning Retrieval Parameters<a class="headerlink" href="#tuning-retrieval-parameters" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.retrieval_strategies</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleSimilarityRetriever</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.pipelines.default_rag_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRAGPipeline</span>
+
+<span class="c1"># Retrieve more documents for complex queries</span>
+<span class="n">pipeline_more_docs</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="n">retrieval_k</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>  <span class="c1"># Retrieve 8 documents per query</span>
+    <span class="c1"># Other parameters...</span>
+<span class="p">)</span>
+
+<span class="c1"># Use a custom retriever with more control</span>
+<span class="n">custom_retriever</span> <span class="o">=</span> <span class="n">SimpleSimilarityRetriever</span><span class="p">(</span>
+    <span class="n">vector_store</span><span class="o">=</span><span class="n">vector_store</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">score_threshold</span><span class="o">=</span><span class="mf">0.7</span>  <span class="c1"># Only return documents with similarity above threshold</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="implementing-advanced-retrieval-strategies">
+<h3>Implementing Advanced Retrieval Strategies<a class="headerlink" href="#implementing-advanced-retrieval-strategies" title="Link to this heading"></a></h3>
+<p>For better retrieval quality, implement a hybrid retrieval strategy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetrievalStrategyInterface</span><span class="p">,</span> <span class="n">Document</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">HybridRetriever</span><span class="p">(</span><span class="n">RetrievalStrategyInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Combines semantic search with keyword matching for better retrieval.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_store</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">keyword_boost</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span> <span class="o">=</span> <span class="n">vector_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keyword_boost</span> <span class="o">=</span> <span class="n">keyword_boost</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_keywords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract important keywords from query.&quot;&quot;&quot;</span>
+        <span class="c1"># Simple implementation - could be improved with NLP techniques</span>
+        <span class="n">stop_words</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;the&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;an&quot;</span><span class="p">,</span> <span class="s2">&quot;in&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="p">,</span> <span class="s2">&quot;at&quot;</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="s2">&quot;are&quot;</span><span class="p">,</span> <span class="s2">&quot;and&quot;</span><span class="p">,</span> <span class="s2">&quot;or&quot;</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;of&quot;</span><span class="p">}</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\b\w+\b&#39;</span><span class="p">,</span> <span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop_words</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_keyword_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">keywords</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate keyword match score for a document.&quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">keywords</span> <span class="k">if</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">content</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">matches</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">keywords</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_relevant_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Document</span><span class="p">]:</span>
+        <span class="c1"># Get vector similarity results</span>
+        <span class="n">vector_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Extract keywords from query</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_keywords</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="c1"># Score documents by combining vector similarity with keyword matching</span>
+        <span class="n">scored_docs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vector_results</span><span class="p">):</span>
+            <span class="c1"># Vector score (approximated by position, best=1.0, worst=0.0)</span>
+            <span class="n">vector_score</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector_results</span><span class="p">))</span>
+
+            <span class="c1"># Keyword score</span>
+            <span class="n">kw_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyword_score</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">keywords</span><span class="p">)</span>
+
+            <span class="c1"># Combined score</span>
+            <span class="n">combined_score</span> <span class="o">=</span> <span class="n">vector_score</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keyword_boost</span> <span class="o">*</span> <span class="n">kw_score</span><span class="p">)</span>
+            <span class="n">scored_docs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc</span><span class="p">,</span> <span class="n">combined_score</span><span class="p">))</span>
+
+        <span class="c1"># Sort by combined score and take top k</span>
+        <span class="n">scored_docs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">doc</span> <span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">scored_docs</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_relevant_documents_with_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Document</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+        <span class="c1"># Similar to above but return the scores as well</span>
+        <span class="n">vector_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_keywords</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">scored_docs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vector_results</span><span class="p">):</span>
+            <span class="n">vector_score</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector_results</span><span class="p">))</span>
+            <span class="n">kw_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keyword_score</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">keywords</span><span class="p">)</span>
+            <span class="n">combined_score</span> <span class="o">=</span> <span class="n">vector_score</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keyword_boost</span> <span class="o">*</span> <span class="n">kw_score</span><span class="p">)</span>
+            <span class="n">scored_docs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">doc</span><span class="p">,</span> <span class="n">combined_score</span><span class="p">))</span>
+
+        <span class="n">scored_docs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scored_docs</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="optimizing-llm-generation">
+<h2>Optimizing LLM Generation<a class="headerlink" href="#optimizing-llm-generation" title="Link to this heading"></a></h2>
+<p>Tune LLM parameters to balance quality, latency, and cost.</p>
+<section id="temperature-and-sampling-parameters">
+<h3>Temperature and Sampling Parameters<a class="headerlink" href="#temperature-and-sampling-parameters" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.pipelines.default_rag_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRAGPipeline</span>
+
+<span class="c1"># More deterministic/factual responses</span>
+<span class="n">factual_pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># Low temperature for more deterministic outputs</span>
+    <span class="n">top_p</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>        <span class="c1"># Nucleus sampling parameter</span>
+    <span class="n">top_k</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>         <span class="c1"># Limit to top 40 tokens when sampling</span>
+    <span class="c1"># Other parameters...</span>
+<span class="p">)</span>
+
+<span class="c1"># More creative/varied responses</span>
+<span class="n">creative_pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>  <span class="c1"># Higher temperature for more variety</span>
+    <span class="n">top_p</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">top_k</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="c1"># Other parameters...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="maximum-token-management">
+<h3>Maximum Token Management<a class="headerlink" href="#maximum-token-management" title="Link to this heading"></a></h3>
+<p>Control token usage for better performance and cost management:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.pipelines.default_rag_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultRAGPipeline</span>
+
+<span class="c1"># Limit output length for cost/performance optimization</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">(</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>  <span class="c1"># Maximum tokens to generate in response</span>
+    <span class="c1"># Other parameters...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Tips for Token Usage:</strong></p>
+<ul class="simple">
+<li><p>For <strong>summaries and short answers</strong>, set max_tokens between 100-250</p></li>
+<li><p>For <strong>detailed explanations</strong>, use 300-800 max_tokens</p></li>
+<li><p>Consider the <strong>pricing model</strong> of your LLM provider when setting limits</p></li>
+<li><p>For systems with many queries, lower max_tokens to <strong>reduce costs and latency</strong></p></li>
+</ul>
+</section>
+<section id="prompt-engineering">
+<h3>Prompt Engineering<a class="headerlink" href="#prompt-engineering" title="Link to this heading"></a></h3>
+<p>Customize the prompt template for better results:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.adapters.llms</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeminiAdapter</span>
+
+<span class="c1"># Custom prompt template</span>
+<span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Answer the following question based only on the provided context.</span>
+<span class="s2">If the answer cannot be determined from the context, say &quot;I don&#39;t have enough information to answer this question.&quot;</span>
+
+<span class="s2">Context:</span>
+<span class="si">{context}</span>
+
+<span class="s2">Question: </span><span class="si">{question}</span>
+
+<span class="s2">Answer:</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># Create LLM with custom prompt template</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">GeminiAdapter</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span><span class="p">,</span>
+    <span class="n">prompt_template</span><span class="o">=</span><span class="n">template</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="system-level-optimizations">
+<h2>System-Level Optimizations<a class="headerlink" href="#system-level-optimizations" title="Link to this heading"></a></h2>
+<p>Optimize the overall RAG system for production use cases.</p>
+<section id="caching-strategies">
+<h3>Caching Strategies<a class="headerlink" href="#caching-strategies" title="Link to this heading"></a></h3>
+<p>Implement response caching to improve performance for repeated queries:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CachedRAGPipeline</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper around RAGPipeline that adds response caching.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">pipeline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_cache</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_query</span> <span class="o">=</span> <span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">cache_size</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_impl</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_hash_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a hash for the query string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">query</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_query_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_hash</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implementation of query that will be cached.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_cache</span><span class="p">[</span><span class="n">query_hash</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">):</span>
+        <span class="n">query_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_query</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+        <span class="c1"># Check if in cache</span>
+        <span class="k">if</span> <span class="n">query_hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_query</span><span class="p">(</span><span class="n">query_hash</span><span class="p">)</span>
+
+        <span class="c1"># Not in cache, perform query</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+        <span class="c1"># Store in cache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_cache</span><span class="p">[</span><span class="n">query_hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+<span class="c1"># Use the cached pipeline</span>
+<span class="n">cached_pipeline</span> <span class="o">=</span> <span class="n">CachedRAGPipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+
+<span class="c1"># This will be slow (first time)</span>
+<span class="n">response1</span> <span class="o">=</span> <span class="n">cached_pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;What is RAG?&quot;</span><span class="p">)</span>
+
+<span class="c1"># This will be fast (cached)</span>
+<span class="n">response2</span> <span class="o">=</span> <span class="n">cached_pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;What is RAG?&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="asynchronous-processing">
+<h3>Asynchronous Processing<a class="headerlink" href="#asynchronous-processing" title="Link to this heading"></a></h3>
+<p>For high-throughput systems, implement asynchronous processing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncRAGPipeline</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper for asynchronous processing of RAG queries.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">pipeline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">executor</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">max_workers</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">query_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Async version of query method.&quot;&quot;&quot;</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">executor</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+            <span class="n">question</span>
+        <span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">questions</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process multiple questions concurrently.&quot;&quot;&quot;</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">query_async</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">questions</span><span class="p">]</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
+
+<span class="c1"># Usage:</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># Create and setup pipeline</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">DefaultRAGPipeline</span><span class="p">()</span>
+    <span class="n">pipeline</span><span class="o">.</span><span class="n">add_texts</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+    <span class="c1"># Create async wrapper</span>
+    <span class="n">async_pipeline</span> <span class="o">=</span> <span class="n">AsyncRAGPipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+
+    <span class="c1"># Process multiple queries concurrently</span>
+    <span class="n">questions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;What is RAG?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;How do embeddings work?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Explain vector databases&quot;</span>
+    <span class="p">]</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">async_pipeline</span><span class="o">.</span><span class="n">process_batch</span><span class="p">(</span><span class="n">questions</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">q</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">questions</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Q: </span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;A: </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+
+<span class="c1"># Run the async function</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="monitoring-and-observability">
+<h3>Monitoring and Observability<a class="headerlink" href="#monitoring-and-observability" title="Link to this heading"></a></h3>
+<p>Implement monitoring for your RAG system:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MonitoredRAGPipeline</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;RAG pipeline with performance monitoring.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">pipeline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;rag_monitor&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Configure logging</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+        <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+        <span class="c1"># Performance metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_times</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retrieval_counts</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span><span class="si">}</span><span class="s2"> documents in </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">):</span>
+        <span class="c1"># Time the query</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="c1"># Get both answer and sources</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">query_with_sources</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+        <span class="c1"># Calculate elapsed time</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elapsed</span><span class="p">)</span>
+
+        <span class="c1"># Log retrieval stats</span>
+        <span class="n">num_sources</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;sources&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retrieval_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_sources</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Query processed in </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s, retrieved </span><span class="si">{</span><span class="n">num_sources</span><span class="si">}</span><span class="s2"> documents, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;avg query time: </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_times</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_times</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;answer&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_performance_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get performance statistics.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_times</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;No queries processed yet&quot;</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;avg_query_time&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_times</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_times</span><span class="p">),</span>
+            <span class="s2">&quot;max_query_time&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_times</span><span class="p">),</span>
+            <span class="s2">&quot;min_query_time&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_times</span><span class="p">),</span>
+            <span class="s2">&quot;total_queries&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_times</span><span class="p">),</span>
+            <span class="s2">&quot;avg_docs_retrieved&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">retrieval_counts</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">retrieval_counts</span><span class="p">)</span>
+        <span class="p">}</span>
+
+<span class="c1"># Use the monitored pipeline</span>
+<span class="n">monitored_pipeline</span> <span class="o">=</span> <span class="n">MonitoredRAGPipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+<span class="n">monitored_pipeline</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+<span class="n">answer</span> <span class="o">=</span> <span class="n">monitored_pipeline</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;What is RAG?&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get performance stats</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">monitored_pipeline</span><span class="o">.</span><span class="n">get_performance_stats</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="comprehensive-rag-system-performance-checklist">
+<h2>Comprehensive RAG System Performance Checklist<a class="headerlink" href="#comprehensive-rag-system-performance-checklist" title="Link to this heading"></a></h2>
+<p>Use this checklist when optimizing your RAG system:</p>
+<ol class="arabic simple">
+<li><p><strong>Embedding Model Selection</strong>
+- [ ] Benchmark different embedding models on your dataset
+- [ ] Balance dimension size vs. quality vs. speed
+- [ ] Consider domain-specific models for specialized content</p></li>
+<li><p><strong>Chunking Optimization</strong>
+- [ ] Test different chunk sizes (300, 800, 1500 chars)
+- [ ] Adjust chunk overlap (10-20% of chunk size)
+- [ ] Consider custom chunking for structured documents</p></li>
+<li><p><strong>Vector Store Tuning</strong>
+- [ ] Select appropriate vector store for dataset size
+- [ ] Configure ANN parameters for large datasets
+- [ ] Implement efficient metadata filtering</p></li>
+<li><p><strong>Retrieval Improvements</strong>
+- [ ] Tune k value (number of retrieved documents)
+- [ ] Consider hybrid retrieval approaches
+- [ ] Implement re-ranking if needed</p></li>
+<li><p><strong>LLM Optimization</strong>
+- [ ] Adjust temperature for factual vs. creative responses
+- [ ] Set appropriate max_tokens limit
+- [ ] Optimize prompt templates
+- [ ] Consider model quantization for on-premise LLMs</p></li>
+<li><p><strong>System-Level Optimizations</strong>
+- [ ] Implement response caching
+- [ ] Use batching for document processing
+- [ ] Enable asynchronous query handling for high throughput
+- [ ] Add monitoring and logging</p></li>
+<li><p><strong>Evaluation</strong>
+- [ ] Measure retrieval precision and recall
+- [ ] Evaluate answer correctness and relevance
+- [ ] Monitor latency and resource usage
+- [ ] Track costs for API-based components</p></li>
+</ol>
+<p>By following these guidelines and tuning techniques, you can significantly improve the performance, quality, and efficiency of your RAGFlow-based applications.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="custom_adapters.html" class="btn btn-neutral float-left" title="Creating Custom Adapters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

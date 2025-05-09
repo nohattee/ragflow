@@ -1,0 +1,253 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concepts &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Customizing RAGFlow" href="user_guide/customization.html" />
+    <link rel="prev" title="Quick Start" href="quick_start.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Concepts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-rag">What is RAG?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-components">Core Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#document-processing">Document Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#embedding-and-storage">Embedding and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retrieval">Retrieval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generation">Generation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ragflow-architecture">RAGFlow Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#core-interfaces">Core Interfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#default-adapters">Default Adapters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pipeline">Pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extension-points">Extension Points</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/customization.html">Customizing RAGFlow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/document_loading.html">Document Loading Tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html">Core Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/adapters.html">Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="advanced/custom_adapters.html">Creating Custom Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced/performance_tuning.html">Performance Tuning</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Concepts</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/concepts.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="concepts">
+<h1>Concepts<a class="headerlink" href="#concepts" title="Link to this heading"></a></h1>
+<p>This page explains the key concepts in Retrieval Augmented Generation (RAG) and how RAGFlow implements them.</p>
+<section id="what-is-rag">
+<h2>What is RAG?<a class="headerlink" href="#what-is-rag" title="Link to this heading"></a></h2>
+<p>Retrieval Augmented Generation (RAG) is a technique that enhances Large Language Models (LLMs) by providing them with relevant external knowledge. In a standard RAG system:</p>
+<ol class="arabic simple">
+<li><p>A user submits a query</p></li>
+<li><p>The system retrieves relevant documents or chunks from a knowledge base</p></li>
+<li><p>The retrieved information is combined with the query and sent to an LLM</p></li>
+<li><p>The LLM generates a response based on both the query and the retrieved context</p></li>
+</ol>
+<p>RAG helps solve several limitations of LLMs:</p>
+<ul class="simple">
+<li><p><strong>Knowledge cutoff</strong>: LLMs are trained on data up to a certain date and don’t have access to newer information</p></li>
+<li><p><strong>Hallucinations</strong>: LLMs can generate plausible but incorrect information</p></li>
+<li><p><strong>Domain-specific knowledge</strong>: LLMs may have limited knowledge in specialized domains</p></li>
+<li><p><strong>Source verification</strong>: RAG allows responses to cite sources for factual claims</p></li>
+</ul>
+</section>
+<section id="core-components">
+<h2>Core Components<a class="headerlink" href="#core-components" title="Link to this heading"></a></h2>
+<p>A RAG system comprises several key components, each with a specific function in the pipeline:</p>
+<section id="document-processing">
+<h3>Document Processing<a class="headerlink" href="#document-processing" title="Link to this heading"></a></h3>
+<p>Before information can be retrieved, it must be processed:</p>
+<ul class="simple">
+<li><p><strong>Document Loading</strong>: Converting various file formats (PDF, DOCX, HTML, etc.) into a common text format</p></li>
+<li><p><strong>Chunking</strong>: Splitting long documents into smaller, manageable chunks that are suitable for embedding and retrieval</p></li>
+<li><p><strong>Metadata</strong>: Adding additional information to chunks to help with filtering and attribution</p></li>
+</ul>
+</section>
+<section id="embedding-and-storage">
+<h3>Embedding and Storage<a class="headerlink" href="#embedding-and-storage" title="Link to this heading"></a></h3>
+<p>To enable efficient retrieval, documents are converted to vector representations and stored:</p>
+<ul class="simple">
+<li><p><strong>Embedding Models</strong>: Neural networks that convert text into numerical vectors that capture semantic meaning</p></li>
+<li><p><strong>Vector Stores</strong>: Specialized databases that store vector embeddings and allow for similarity search</p></li>
+<li><p><strong>Indexing</strong>: Techniques to organize vectors for efficient retrieval</p></li>
+</ul>
+</section>
+<section id="retrieval">
+<h3>Retrieval<a class="headerlink" href="#retrieval" title="Link to this heading"></a></h3>
+<p>When a query is received, relevant information is retrieved:</p>
+<ul class="simple">
+<li><p><strong>Query Embedding</strong>: Converting the user’s query into a vector representation</p></li>
+<li><p><strong>Similarity Search</strong>: Finding document chunks whose embeddings are most similar to the query embedding</p></li>
+<li><p><strong>Reranking</strong>: Further refining retrieved results to improve relevance</p></li>
+<li><p><strong>Filtering</strong>: Limiting results based on metadata or other criteria</p></li>
+</ul>
+</section>
+<section id="generation">
+<h3>Generation<a class="headerlink" href="#generation" title="Link to this heading"></a></h3>
+<p>Finally, the retrieved information is used to generate a response:</p>
+<ul class="simple">
+<li><p><strong>Context Integration</strong>: Combining retrieved documents with the user’s query</p></li>
+<li><p><strong>Prompt Engineering</strong>: Formatting the context and query for optimal LLM performance</p></li>
+<li><p><strong>LLM Generation</strong>: Using an LLM to create a coherent, accurate response based on the provided information</p></li>
+<li><p><strong>Response Processing</strong>: Formatting the response, extracting citations, etc.</p></li>
+</ul>
+</section>
+</section>
+<section id="ragflow-architecture">
+<h2>RAGFlow Architecture<a class="headerlink" href="#ragflow-architecture" title="Link to this heading"></a></h2>
+<p>RAGFlow implements these core RAG components through a modular, interface-driven architecture:</p>
+<section id="core-interfaces">
+<h3>Core Interfaces<a class="headerlink" href="#core-interfaces" title="Link to this heading"></a></h3>
+<p>RAGFlow defines five key interfaces that correspond to the main components of a RAG system:</p>
+<ul class="simple">
+<li><p><strong>ChunkingStrategyInterface</strong>: Defines how documents are split into chunks</p></li>
+<li><p><strong>EmbeddingModelInterface</strong>: Defines how text is converted to vector embeddings</p></li>
+<li><p><strong>VectorStoreInterface</strong>: Defines how embeddings are stored and retrieved</p></li>
+<li><p><strong>RetrievalStrategyInterface</strong>: Defines how relevant documents are retrieved for a query</p></li>
+<li><p><strong>LLMInterface</strong>: Defines how responses are generated based on retrieved context</p></li>
+</ul>
+</section>
+<section id="default-adapters">
+<h3>Default Adapters<a class="headerlink" href="#default-adapters" title="Link to this heading"></a></h3>
+<p>RAGFlow provides default implementations for each interface:</p>
+<ul class="simple">
+<li><p><strong>RecursiveCharacterTextSplitterAdapter</strong>: Splits text based on character separators</p></li>
+<li><p><strong>SentenceTransformersAdapter</strong>: Uses the Sentence Transformers library for embeddings</p></li>
+<li><p><strong>ChromaDBAdapter</strong>: Uses ChromaDB for vector storage</p></li>
+<li><p><strong>SimpleSimilarityRetriever</strong>: Retrieves documents based on embedding similarity</p></li>
+<li><p><strong>GeminiAdapter</strong>: Uses Google’s Gemini model for text generation</p></li>
+</ul>
+</section>
+<section id="pipeline">
+<h3>Pipeline<a class="headerlink" href="#pipeline" title="Link to this heading"></a></h3>
+<p>These components are orchestrated by the RAGFlow pipeline:</p>
+<ul class="simple">
+<li><p><strong>RAGPipeline</strong>: The base pipeline class that defines the workflow between components</p></li>
+<li><p><strong>DefaultRAGPipeline</strong>: A pre-configured pipeline using the default adapters</p></li>
+</ul>
+</section>
+<section id="extension-points">
+<h3>Extension Points<a class="headerlink" href="#extension-points" title="Link to this heading"></a></h3>
+<p>RAGFlow is designed to be extensible:</p>
+<ul class="simple">
+<li><p>Custom adapters can be created by implementing any of the core interfaces</p></li>
+<li><p>The default pipeline can be customized through configuration</p></li>
+<li><p>Individual components can be used independently or combined in custom ways</p></li>
+</ul>
+<p>Understanding these concepts will help you effectively use RAGFlow and customize it to your specific needs. For practical examples, see the <a class="reference internal" href="quick_start.html"><span class="doc">Quick Start</span></a> guide and the various <a class="reference internal" href="tutorials/basic_rag.html"><span class="doc">Basic RAG Tutorial</span></a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quick_start.html" class="btn btn-neutral float-left" title="Quick Start" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="user_guide/customization.html" class="btn btn-neutral float-right" title="Customizing RAGFlow" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

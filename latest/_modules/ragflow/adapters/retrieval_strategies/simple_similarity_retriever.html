@@ -1,0 +1,233 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ragflow.adapters.retrieval_strategies.simple_similarity_retriever &mdash; RAGFlow Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            RAGFlow
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quick_start.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../concepts.html">Concepts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide/customization.html">Customizing RAGFlow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/basic_rag.html">Basic RAG Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/document_loading.html">Document Loading Tutorial</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/pipelines.html">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/adapters.html">Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Advanced</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../advanced/custom_adapters.html">Creating Custom Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../advanced/performance_tuning.html">Performance Tuning</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">RAGFlow</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ragflow.adapters.retrieval_strategies.simple_similarity_retriever</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ragflow.adapters.retrieval_strategies.simple_similarity_retriever</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Simple similarity-based retrieval strategy adapter.</span>
+
+<span class="sd">This module provides an adapter implementing the RetrievalStrategyInterface</span>
+<span class="sd">for simple similarity-based retrieval.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragflow.core.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetrievalStrategyInterface</span><span class="p">,</span> <span class="n">VectorStoreInterface</span>
+
+
+<div class="viewcode-block" id="SimpleSimilarityRetriever">
+<a class="viewcode-back" href="../../../../api/adapters.html#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleSimilarityRetriever</span><span class="p">(</span><span class="n">RetrievalStrategyInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple similarity-based retrieval strategy.</span>
+
+<span class="sd">    Adapter for a simple similarity-based retrieval strategy that implements</span>
+<span class="sd">    the RetrievalStrategyInterface.</span>
+
+<span class="sd">    This adapter uses a vector store to retrieve documents based on their</span>
+<span class="sd">    similarity to the query.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SimpleSimilarityRetriever.__init__">
+<a class="viewcode-back" href="../../../../api/adapters.html#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_store</span><span class="p">:</span> <span class="n">VectorStoreInterface</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the SimpleSimilarityRetriever.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vector_store: The vector store to retrieve documents from.</span>
+<span class="sd">            k: Number of documents to retrieve (default: 4).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span> <span class="o">=</span> <span class="n">vector_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span></div>
+
+
+<div class="viewcode-block" id="SimpleSimilarityRetriever.retrieve">
+<a class="viewcode-back" href="../../../../api/adapters.html#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.retrieve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retrieve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vector_store</span><span class="p">:</span> <span class="n">VectorStoreInterface</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve relevant documents from the vector store.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: The query to find relevant documents for.</span>
+<span class="sd">            vector_store: The vector store to retrieve documents from.</span>
+<span class="sd">                If provided, this overrides the vector_store set in the constructor.</span>
+<span class="sd">            k: Number of documents to retrieve.</span>
+<span class="sd">                If provided, this overrides the k value set in the constructor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of retrieved documents.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Use the provided vector_store if available, otherwise use the one from the constructor</span>
+        <span class="n">target_store</span> <span class="o">=</span> <span class="n">vector_store</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector_store</span>
+
+        <span class="c1"># Use the provided k if available, otherwise use the one from the constructor</span>
+        <span class="n">target_k</span> <span class="o">=</span> <span class="n">k</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
+
+        <span class="c1"># Perform similarity search</span>
+        <span class="k">return</span> <span class="n">target_store</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">target_k</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SimpleSimilarityRetriever.get_relevant_documents">
+<a class="viewcode-back" href="../../../../api/adapters.html#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.get_relevant_documents">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_relevant_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve documents relevant to the query.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: Query string</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of relevant documents</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SimpleSimilarityRetriever.get_relevant_documents_with_scores">
+<a class="viewcode-back" href="../../../../api/adapters.html#ragflow.adapters.retrieval_strategies.simple_similarity_retriever.SimpleSimilarityRetriever.get_relevant_documents_with_scores">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_relevant_documents_with_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve documents relevant to the query with relevance scores.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: Query string</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of tuples containing (document, score)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># For the default adapter, we&#39;ll use a simple similarity search</span>
+        <span class="c1"># and then assign a placeholder score of 1.0 to each result</span>
+        <span class="c1"># This is a simplification, as we don&#39;t have direct access to scores</span>
+        <span class="c1"># in the basic VectorStoreInterface</span>
+
+        <span class="n">documents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># Create a list of tuples with documents and placeholder scores</span>
+        <span class="c1"># In a more advanced implementation, these would be actual relevance scores</span>
+        <span class="c1"># For now, we apply a descending score that starts at 1.0 and decreases</span>
+        <span class="c1"># This assumes the vector store returns results in order of relevance</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">documents</span><span class="p">):</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.9</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">documents</span><span class="p">),</span> <span class="mi">1</span><span class="p">)))</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="o">**</span><span class="n">doc</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">score</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RAGFlow Team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
