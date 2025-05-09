@@ -330,3 +330,259 @@ class RAGPipeline:
 
         # Return both the answer and the source documents
         return {"answer": answer, "sources": relevant_docs}
+
+
+class AgenticRAGPipeline(RAGPipeline):
+    """
+    An agentic RAG pipeline that uses an LLM-based agent.
+
+    An agentic RAG pipeline that uses an LLM-based agent to decide when to retrieve
+    documents, rewrite queries, and generate answers.
+
+    This pipeline follows a more dynamic flow based on the agent's decisions.
+    """
+
+    def __init__(
+        self,
+        agent_llm: LLMInterface,
+        generator_llm: LLMInterface,
+        retrieval_strategy: RetrievalStrategyInterface,
+        chunking_strategy: Optional[ChunkingStrategyInterface] = None,
+        embedding_model: Optional[EmbeddingModelInterface] = None,
+        vector_store: Optional[VectorStoreInterface] = None,
+        max_iterations: int = 3,
+    ):
+        """
+        Initialize the AgenticRAGPipeline with the given components.
+
+        Args:
+            agent_llm: The LLM used for decision-making and query generation.
+            generator_llm: The LLM used for final answer generation.
+            retrieval_strategy: The strategy for retrieving relevant documents.
+            chunking_strategy: The strategy for chunking documents.
+            embedding_model: The embedding model for generating document embeddings.
+            vector_store: The vector store for storing document embeddings.
+            max_iterations: The maximum number of iterations for the agentic loop.
+        """
+        if chunking_strategy and embedding_model and vector_store:
+            super().__init__(
+                chunking_strategy=chunking_strategy,
+                embedding_model=embedding_model,
+                vector_store=vector_store,
+                retrieval_strategy=retrieval_strategy,
+                llm=generator_llm,
+            )
+        elif not (
+            chunking_strategy is None
+            and embedding_model is None
+            and vector_store is None
+        ):
+            raise ValueError(
+                "Either all of chunking_strategy, embedding_model, and vector_store must be provided, or none."
+            )
+        else:
+            self.chunking_strategy = chunking_strategy
+            self.embedding_model = embedding_model
+            self.vector_store = vector_store
+            self.retrieval_strategy = retrieval_strategy
+            self.llm = generator_llm  # Base class uses self.llm for its query methods
+
+        self.agent_llm = agent_llm
+        self.generator_llm = (
+            generator_llm  # Explicit reference for clarity in agentic methods
+        )
+        self.max_iterations = max_iterations
+
+    def _decide_retrieval(self, question: str, history: List[str]) -> Dict[str, Any]:
+        prompt = f"""You are an intelligent assistant. Given the question: "{question}"
+History of previous attempts:
+{history_str if (history_str := "\\n".join(history)) else "No previous attempts."}
+
+What is the best next step?
+Your available actions are:
+1. **retrieve**: If you need more information to answer the question. Provide the search query.
+2. **rewrite**: If the current question is not good for retrieval and needs reformulation. Provide the new query.
+3. **answer**: If you have enough information or believe you can answer directly. Provide the answer.
+4. **end**: If you've tried and cannot answer the question.
+
+Respond with a JSON object with "action" and relevant keys (e.g., "query" for retrieve, "new_query" for rewrite, "content" for answer/end).
+Example for retrieve: {{"action": "retrieve", "query": "details about X"}}
+Example for answer: {{"action": "answer", "content": "The answer is Y."}}
+"""
+        response_text = self.agent_llm.generate(prompt)
+        try:
+            import json
+
+            decision = json.loads(response_text)
+            if "action" not in decision:
+                return {"action": "answer", "content": response_text}  # Fallback
+            return decision
+        except json.JSONDecodeError:
+            print(f"Warning: Agent LLM did not return valid JSON: {response_text}")
+            return {"action": "answer", "content": response_text}  # Fallback
+
+    def _check_relevance(self, question: str, documents: List[Document]) -> bool:
+        if not documents:
+            return False
+        context_str = "\n\n".join([doc.page_content for doc in documents])
+        prompt = f"""Given the question: "{question}"
+And the following retrieved context:
+---
+{context_str[:2000]}
+---
+Is the retrieved context relevant and sufficient to answer the question?
+Answer with only "Yes" or "No".
+"""
+        relevance_response = self.agent_llm.generate(prompt).strip().lower()
+        return "yes" in relevance_response
+
+    def _rewrite_query(self, original_question: str, feedback: str) -> str:
+        prompt = f"""The previous attempt to answer the question "{original_question}" was not successful.
+Feedback: {feedback}
+Please rewrite the question to be more effective for information retrieval or to clarify the user's intent.
+Return only the rewritten question.
+Rewritten Question:"""
+        rewritten_query = self.agent_llm.generate(prompt).strip()
+        return rewritten_query
+
+    def _generate_final_answer(self, question: str, documents: List[Document]) -> str:
+        return self.generator_llm.generate_with_context(question, documents)
+
+    def _agentic_loop(self, question: str) -> Dict[str, Any]:
+        """
+        Core agentic loop to process a question.
+
+        Returns a dictionary containing "answer", "sources", and "history".
+        """
+        current_query = question
+        history: List[str] = []
+        final_docs_for_answer: List[Document] = []
+        answer = "Could not determine an answer through the agentic process."  # Default answer
+
+        for iteration in range(self.max_iterations):
+            history.append(
+                f"Iteration {iteration + 1}, Current query: '{current_query}'"
+            )
+            decision = self._decide_retrieval(current_query, history)
+            action = decision.get("action")
+
+            if action == "retrieve":
+                search_query = decision.get("query", current_query)
+                history.append(
+                    f"Action: Retrieve documents with query: '{search_query}'"
+                )
+                retrieved_docs = self.retrieval_strategy.get_relevant_documents(
+                    search_query
+                )
+                if self._check_relevance(current_query, retrieved_docs):
+                    history.append(
+                        "Action: Documents found relevant. Generating answer."
+                    )
+                    final_docs_for_answer = retrieved_docs
+                    answer = self._generate_final_answer(
+                        current_query, final_docs_for_answer
+                    )
+                    return {
+                        "answer": answer,
+                        "sources": final_docs_for_answer,
+                        "history": history,
+                    }
+                else:
+                    history.append("Action: Documents found not relevant.")
+                    # Provide feedback for rewrite based on irrelevance
+                    feedback = "Retrieved documents were not relevant to the query."
+                    # Allow agent to decide next step, which could be rewrite
+                    # If agent decides to rewrite, it will happen in next iteration based on history.
+                    # Or, force a rewrite here:
+                    current_query = self._rewrite_query(
+                        question, feedback
+                    )  # Use original question for context
+                    if (
+                        not current_query or current_query == question
+                    ):  # Avoid infinite loop on bad rewrite
+                        history.append(
+                            "Rewrite did not change query or failed. Ending with no relevant docs."
+                        )
+                        answer = "I could not find relevant information after attempting retrieval and rewrite."
+                        return {"answer": answer, "sources": [], "history": history}
+                    final_docs_for_answer = []  # Reset docs as query changed
+                    continue  # Continue to next iteration with rewritten query
+
+            elif action == "rewrite":
+                new_query = decision.get("new_query")
+                if not new_query or new_query == current_query:
+                    history.append(
+                        f"Action: Rewrite failed or produced same query ('{new_query}')."
+                    )
+                    # Attempt to answer with any last known good documents or end
+                    if final_docs_for_answer and self._check_relevance(
+                        question, final_docs_for_answer
+                    ):
+                        answer = self._generate_final_answer(
+                            question, final_docs_for_answer
+                        )
+                    else:
+                        answer = "I tried to rewrite the question but could not improve it to find an answer."
+                    return {
+                        "answer": answer,
+                        "sources": final_docs_for_answer,
+                        "history": history,
+                    }
+
+                history.append(
+                    f"Action: Rewrite query from '{current_query}' to '{new_query}'"
+                )
+                current_query = new_query
+                final_docs_for_answer = []  # Reset retrieved docs for new query
+                continue
+
+            elif action == "answer":
+                answer = decision.get("content", "I'm not sure how to respond to that.")
+                history.append(f"Action: Answer directly. Content: '{answer[:50]}...'")
+                return {
+                    "answer": answer,
+                    "sources": final_docs_for_answer,
+                    "history": history,
+                }  # Sources might be from a previous step
+
+            elif action == "end":
+                answer = decision.get(
+                    "content",
+                    "I am unable to answer your question with the available information.",
+                )
+                history.append(f"Action: End. Content: '{answer}'")
+                return {"answer": answer, "sources": [], "history": history}
+
+            else:
+                answer = "I encountered an unexpected situation and cannot proceed."
+                history.append(f"Action: Unknown agent action: {action}. Ending.")
+                return {"answer": answer, "sources": [], "history": history}
+
+        history.append("Max iterations reached.")
+        # Fallback if max_iterations reached without a definitive answer
+        if final_docs_for_answer and self._check_relevance(
+            question, final_docs_for_answer
+        ):  # Use original question for relevance check
+            answer = self._generate_final_answer(
+                question, final_docs_for_answer
+            )  # Use original question for generation
+        else:
+            answer = "I've tried multiple steps but could not find a satisfactory answer to your question."
+        return {"answer": answer, "sources": final_docs_for_answer, "history": history}
+
+    def query(self, question: str) -> str:  # type: ignore
+        """
+        Processes a query using the agentic loop.
+
+        Args:
+            question: The user's question.
+
+        Returns:
+            The generated answer.
+        """
+        result = self._agentic_loop(question)
+        return result["answer"]
+
+    def query_with_sources(self, question: str) -> Dict[str, Any]:
+        """Processes a query using the agentic loop and returns answer with sources and history."""
+        return self._agentic_loop(question)

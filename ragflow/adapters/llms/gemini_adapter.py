@@ -7,7 +7,8 @@ API to generate text.
 
 from typing import List, Optional
 
-import google as genai
+from google import genai
+from google.genai import types
 
 from ragflow.core.interfaces import Document, LLMInterface
 
@@ -23,7 +24,7 @@ class GeminiAdapter(LLMInterface):
     def __init__(
         self,
         api_key: str,
-        model_name: str = "gemini-pro",
+        model_name: str = "gemini-2.0-flash",
         temperature: float = 0.7,
         max_tokens: Optional[int] = None,
         top_p: float = 0.95,
@@ -34,7 +35,7 @@ class GeminiAdapter(LLMInterface):
 
         Args:
             api_key: Google API key for Gemini
-            model_name: Name of the Gemini model to use (default: "gemini-pro")
+            model_name: Name of the Gemini model to use (default: "gemini-2.0-flash")
             temperature: Controls randomness in generation (0.0 to 1.0)
             max_tokens: Maximum number of tokens to generate (optional)
             top_p: Nucleus sampling parameter (0.0 to 1.0)
@@ -47,17 +48,8 @@ class GeminiAdapter(LLMInterface):
         self.top_p = top_p
         self.top_k = top_k
 
-        # Configure the Gemini API
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel(
-            model_name=model_name,
-            generation_config={
-                "temperature": temperature,
-                "top_p": top_p,
-                "top_k": top_k,
-                "max_output_tokens": max_tokens,
-            },
-        )
+        # Configure the Gemini API Client
+        self.client = genai.Client(api_key=api_key)
 
     def generate(self, prompt: str) -> str:
         """
@@ -69,7 +61,16 @@ class GeminiAdapter(LLMInterface):
         Returns:
             Generated text
         """
-        response = self.model.generate_content(prompt)
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=self.temperature,
+                max_output_tokens=self.max_tokens,
+                top_p=self.top_p,
+                top_k=self.top_k,
+            ),
+        )
         return response.text
 
     def generate_with_context(self, query: str, context: List[Document]) -> str:
@@ -98,5 +99,14 @@ class GeminiAdapter(LLMInterface):
         If the context doesn't contain the answer, say "I don't have enough information to answer this question."
         """
 
-        response = self.model.generate_content(prompt)
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=self.temperature,
+                max_output_tokens=self.max_tokens,
+                top_p=self.top_p,
+                top_k=self.top_k,
+            ),
+        )
         return response.text
